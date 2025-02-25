@@ -1,4 +1,4 @@
-# pawtrack
+# PawTrack
 
 PawTrack App
 
