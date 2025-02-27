@@ -6,14 +6,18 @@ import 'package:pawtrack/components/custom_text_field.dart';
 
 class LoginPage extends StatelessWidget {
 
+  final void Function()? onTap;
+
+  LoginPage({
+    super.key,
+    required this.onTap});
+
   // controllers for text fields
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   // login logic
   void login(){}
-
-  LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +94,7 @@ class LoginPage extends StatelessWidget {
                   Text("Don't have an account?",
                     style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,),),
                   GestureDetector(
-                      onTap: (){},
+                      onTap: onTap,
                       child: const Text(" Register Here!", style: TextStyle(fontWeight: FontWeight.bold,))),
                 ],
               )
