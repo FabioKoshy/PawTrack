@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-class TextField extends StatelessWidget {
+class CustomTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final TextEditingController controller;
 
-  const TextField({
+  const CustomTextField({
     super.key,
     required this.hintText,
     required this.obscureText,
-    required this.controller, required InputDecoration decoration,
+    required this.controller,
+
 
   });
 
@@ -17,11 +18,13 @@ class TextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      hintText: hintText,
-      obscureText: obscureText,
       decoration: InputDecoration(
-        border: OutlineInputBorder(),
+        hintText: hintText,
+        border:  OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
+      obscureText: obscureText,
     );
   }
 }

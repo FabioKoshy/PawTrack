@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../components/custom_text_field.dart';
+
 class LoginPage extends StatelessWidget {
 
   // controller for text fields
@@ -13,43 +15,67 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //logo
-            // ToDO Add a proper logo
-            Icon(
-                Icons.person,
-                size: 80,
-                color: Theme.of(context).colorScheme.inversePrimary,
-            ),
+        child: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //logo
+              // ToDO Add a proper logo
+              Icon(
+                  Icons.person,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.inversePrimary,
+              ),
 
-            const SizedBox(height: 25),
+              const SizedBox(height: 25),
 
-            // app name
-            Text(
-              'PawTrack',
-              style: TextStyle(
-                fontSize: 20
-                ),
-            ),
+              // app name
+              Text(
+                'PawTrack',
+                style: TextStyle(
+                  fontSize: 20
+                  ),
+              ),
 
-          ],
-          
+              const SizedBox(height: 50),
+
+              // email field
+              CustomTextField(
+                hintText: "Email",
+                obscureText: false,
+                controller: emailController,
+              ),
+
+              const SizedBox(height: 10),
+
+              // password field
+              CustomTextField(
+                hintText: "Password",
+                obscureText: true,
+                controller: passwordController,
+              ),
+
+              const SizedBox(height: 10),
+
+
+            ],
 
 
 
-          // email field
 
 
-          // password field
 
-          // forgot pass
 
-          // login button
 
-          // dont have an account signup button
 
+            // forgot pass
+
+            // login button
+
+            // dont have an account signup button
+
+          ),
         ),
       ),
     );
