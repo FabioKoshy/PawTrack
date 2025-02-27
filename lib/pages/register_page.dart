@@ -4,20 +4,24 @@ import 'package:pawtrack/components/custom_text_field.dart';
 
 
 
-class LoginPage extends StatelessWidget {
+class RegisterPage extends StatelessWidget {
 
   final void Function()? onTap;
 
-  LoginPage({
-    super.key,
+
+
+
+  RegisterPage({super.key,
     required this.onTap});
 
   // controllers for text fields
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
-  // login logic
-  void login(){}
+  // register logic
+  void register(){}
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +36,9 @@ class LoginPage extends StatelessWidget {
               //logo
               // ToDO Add a proper logo
               Icon(
-                  Icons.person,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                Icons.person,
+                size: 80,
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
 
               const SizedBox(height: 25),
@@ -43,11 +47,20 @@ class LoginPage extends StatelessWidget {
               Text(
                 'PawTrack',
                 style: TextStyle(
-                  fontSize: 20
-                  ),
+                    fontSize: 20
+                ),
               ),
 
               const SizedBox(height: 50),
+
+              // username field
+              CustomTextField(
+                hintText: "Username",
+                obscureText: false,
+                controller: usernameController,
+              ),
+
+              const SizedBox(height: 10),
 
               // email field
               CustomTextField(
@@ -67,35 +80,44 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 10),
 
+              // confirm password field
+              CustomTextField(
+                hintText: "Confirm Password",
+                obscureText: true,
+                controller: confirmPasswordController,
+              ),
+
+              const SizedBox(height: 10),
+
               // forgot pass
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text("Forgot Password?",
-                       style: TextStyle(
-                           color: Theme.of(context).colorScheme.inversePrimary,),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,),
                   ),
                 ],
               ),
               const SizedBox(height: 25),
 
-              // login button
+              // register button
               CustomButton(
-                text: "Login",
-                onTap: login,
+                text: "Register",
+                onTap: register,
               ),
 
               const SizedBox(height: 25),
 
-              // dont have an account signup button
+              // dont have an account Login button
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account?",
+                  Text("Already have an account?",
                     style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,),),
                   GestureDetector(
                       onTap: onTap,
-                      child: const Text(" Register Here!", style: TextStyle(fontWeight: FontWeight.bold,))),
+                      child: const Text(" Login Here!", style: TextStyle(fontWeight: FontWeight.bold,))),
                 ],
               )
 
