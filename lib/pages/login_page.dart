@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:pawtrack/components/custom_button.dart';
+import 'package:pawtrack/components/custom_text_field.dart';
 
-import '../components/custom_text_field.dart';
+
 
 class LoginPage extends StatelessWidget {
 
-  // controller for text fields
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  // controllers for text fields
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // login logic
+  void login(){}
 
   LoginPage({super.key});
 
@@ -58,22 +63,40 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 10),
 
+              // forgot pass
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text("Forgot Password?",
+                       style: TextStyle(
+                           color: Theme.of(context).colorScheme.inversePrimary,),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 25),
+
+              // login button
+              CustomButton(
+                text: "Login",
+                onTap: login,
+              ),
+
+              const SizedBox(height: 25),
+
+              // dont have an account signup button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Don't have an account?",
+                    style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,),),
+                  GestureDetector(
+                      onTap: (){},
+                      child: const Text(" Register Here!", style: TextStyle(fontWeight: FontWeight.bold,))),
+                ],
+              )
 
             ],
 
-
-
-
-
-
-
-
-
-            // forgot pass
-
-            // login button
-
-            // dont have an account signup button
 
           ),
         ),
