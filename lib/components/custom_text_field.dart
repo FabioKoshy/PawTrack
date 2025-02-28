@@ -10,8 +10,6 @@ class CustomTextField extends StatelessWidget {
     required this.hintText,
     required this.obscureText,
     required this.controller,
-
-
   });
 
   @override
@@ -20,11 +18,31 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
-        border:  OutlineInputBorder(
+        hintStyle: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+        border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Colors.grey.shade600, // Dark grey border for visibility
+            width: 2.0, // Thicker border
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Colors.grey.shade600, // Consistent color when enabled
+            width: 2.0,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.primary, // Pink when focused
+            width: 2.0,
+          ),
         ),
       ),
       obscureText: obscureText,
+      style: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
     );
   }
 }
