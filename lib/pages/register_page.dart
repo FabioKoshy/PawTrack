@@ -1,129 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pawtrack/components/custom_button.dart';
 import 'package:pawtrack/components/custom_text_field.dart';
 
-
-
-class RegisterPage extends StatelessWidget {
-
+class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
 
+  const RegisterPage({super.key, required this.onTap});
 
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
 
-
-  RegisterPage({super.key,
-    required this.onTap});
-
-  // controllers for text fields
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
-  // register logic
-  void register(){}
+  void register() {
+    String username = usernameController.text.trim();
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    String confirmPassword = confirmPasswordController.text.trim();
+
+    if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      _showErrorSnackBar('Please fill in all fields');
+    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+      _showErrorSnackBar('Please enter a valid email');
+    } else if (password.length < 6) {
+      _showErrorSnackBar('Password must be at least 6 characters');
+    } else if (password != confirmPassword) {
+      _showErrorSnackBar('Passwords do not match');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registering $username')),
+      );
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
+      body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              //logo
-              // ToDO Add a proper logo
-              Icon(
-                Icons.person,
-                size: 80,
-                color: Theme.of(context).colorScheme.inversePrimary,
+              SvgPicture.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/images/paw_heart_dark_logo.svg'
+                    : 'assets/images/paw_heart_light_logo.svg',
+                height: 120,
+                width: 120,
               ),
-
-              const SizedBox(height: 25),
-
-              // app name
               Text(
                 'PawTrack',
-                style: TextStyle(
-                    fontSize: 20
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
-
-              const SizedBox(height: 50),
-
-              // username field
-              CustomTextField(
-                hintText: "Username",
-                obscureText: false,
-                controller: usernameController,
-              ),
-
-              const SizedBox(height: 10),
-
-              // email field
-              CustomTextField(
-                hintText: "Email",
-                obscureText: false,
-                controller: emailController,
-              ),
-
-              const SizedBox(height: 10),
-
-              // password field
-              CustomTextField(
-                hintText: "Password",
-                obscureText: true,
-                controller: passwordController,
-              ),
-
-              const SizedBox(height: 10),
-
-              // confirm password field
-              CustomTextField(
-                hintText: "Confirm Password",
-                obscureText: true,
-                controller: confirmPasswordController,
-              ),
-
-              const SizedBox(height: 10),
-
-              // forgot pass
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              Column(
                 children: [
-                  Text("Forgot Password?",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,),
-                  ),
+                  CustomTextField(hintText: "Username", obscureText: false, controller: usernameController),
+                  const SizedBox(height: 10),
+                  CustomTextField(hintText: "Email", obscureText: false, controller: emailController),
+                  const SizedBox(height: 10),
+                  CustomTextField(hintText: "Password", obscureText: true, controller: passwordController),
+                  const SizedBox(height: 10),
+                  CustomTextField(hintText: "Confirm Password", obscureText: true, controller: confirmPasswordController),
                 ],
               ),
-              const SizedBox(height: 25),
-
-              // register button
-              CustomButton(
-                text: "Register",
-                onTap: register,
-              ),
-
-              const SizedBox(height: 25),
-
-              // dont have an account Login button
+              CustomButton(text: "Register", onTap: register),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Already have an account?",
-                    style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,),),
+                  Text(
+                    "Already have an account? ",
+                    style: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+                  ),
                   GestureDetector(
-                      onTap: onTap,
-                      child: const Text(" Login Here!", style: TextStyle(fontWeight: FontWeight.bold,))),
+                    onTap: widget.onTap,
+                    child: Text(
+                      "Login Here!",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ],
-              )
-
+              ),
             ],
-
-
           ),
         ),
       ),

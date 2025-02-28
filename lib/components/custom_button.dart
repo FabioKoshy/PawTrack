@@ -19,7 +19,10 @@ class CustomButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.white, // White text for contrast on pink button
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

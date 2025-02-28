@@ -1,107 +1,132 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pawtrack/components/custom_button.dart';
 import 'package:pawtrack/components/custom_text_field.dart';
 
-
-
-class LoginPage extends StatelessWidget {
-
+class LoginPage extends StatefulWidget {
   final void Function()? onTap;
 
-  LoginPage({
-    super.key,
-    required this.onTap});
+  const LoginPage({super.key, required this.onTap});
 
-  // controllers for text fields
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool rememberMe = false;
 
-  // login logic
-  void login(){}
+  void login() {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      _showErrorSnackBar('Please fill in all fields');
+    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+      _showErrorSnackBar('Please enter a valid email');
+    } else if (password.length < 6) {
+      _showErrorSnackBar('Password must be at least 6 characters');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Logging in with $email')),
+      );
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
+      body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              //logo
-              // ToDO Add a proper logo
-              Icon(
-                  Icons.person,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.inversePrimary,
+              SvgPicture.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/images/paw_heart_dark_logo.svg'
+                    : 'assets/images/paw_heart_light_logo.svg',
+                height: 120,
+                width: 120,
               ),
-
-              const SizedBox(height: 25),
-
-              // app name
               Text(
                 'PawTrack',
-                style: TextStyle(
-                  fontSize: 20
-                  ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
-
-              const SizedBox(height: 50),
-
-              // email field
-              CustomTextField(
-                hintText: "Email",
-                obscureText: false,
-                controller: emailController,
-              ),
-
-              const SizedBox(height: 10),
-
-              // password field
-              CustomTextField(
-                hintText: "Password",
-                obscureText: true,
-                controller: passwordController,
-              ),
-
-              const SizedBox(height: 10),
-
-              // forgot pass
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              Column(
                 children: [
-                  Text("Forgot Password?",
-                       style: TextStyle(
-                           color: Theme.of(context).colorScheme.inversePrimary,),
+                  CustomTextField(
+                    hintText: "Email",
+                    obscureText: false,
+                    controller: emailController,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    hintText: "Password",
+                    obscureText: true,
+                    controller: passwordController,
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: rememberMe,
+                            onChanged: (value) {
+                              setState(() => rememberMe = value!);
+                            },
+                            activeColor: Theme.of(context).colorScheme.primary,
+                          ),
+                          Text(
+                            "Remember Me",
+                            style: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+                          ),
+                        ],
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          _showErrorSnackBar("Forgot Password feature coming soon!");
+                        },
+                        child: Text(
+                          "Forgot Password?",
+                          style: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 25),
-
-              // login button
-              CustomButton(
-                text: "Login",
-                onTap: login,
-              ),
-
-              const SizedBox(height: 25),
-
-              // dont have an account signup button
+              CustomButton(text: "Login", onTap: login),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account?",
-                    style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,),),
+                  Text(
+                    "Don't have an account? ",
+                    style: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+                  ),
                   GestureDetector(
-                      onTap: onTap,
-                      child: const Text(" Register Here!", style: TextStyle(fontWeight: FontWeight.bold,))),
+                    onTap: widget.onTap,
+                    child: Text(
+                      "Register Here!",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ],
-              )
-
+              ),
             ],
-
-
           ),
         ),
       ),
