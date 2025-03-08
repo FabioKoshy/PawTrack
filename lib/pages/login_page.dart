@@ -8,7 +8,7 @@ import 'package:pawtrack/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
-  final void Function()? onTap;
+  final VoidCallback? onTap;
 
   const LoginPage({super.key, required this.onTap});
 
@@ -46,10 +46,8 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => isLoading = true);
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
-    print('Attempting login with email: $email');
     try {
       await _authService.login(email, password);
-      print('Login successful');
       await prefs.setBool('rememberMe', rememberMe);
       if (rememberMe) {
         await prefs.setString('email', email);
@@ -58,12 +56,8 @@ class _LoginPageState extends State<LoginPage> {
         await prefs.remove('email');
         await prefs.remove('password');
       }
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
-        print('Navigating to HomePage');
-      }
+      if (mounted) Navigator.pushReplacementNamed(context, AppRoutes.home);
     } on FirebaseAuthException catch (e) {
-      print('Login failed: ${e.message}');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message ?? 'Login failed'), backgroundColor: Colors.red),
@@ -102,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SingleChildScrollView( // Add scrollable content
+      body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
             padding: AppPadding.pagePadding,
@@ -110,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
               key: _formKey,
               child: Column(
                 children: [
-                  const SizedBox(height: 20), // Top padding
+                  const SizedBox(height: 20),
                   SvgPicture.asset(
                     Theme.of(context).brightness == Brightness.dark
                         ? 'assets/images/paw_heart_dark_logo.svg'
@@ -119,10 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: 120,
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    'PawTrack',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
+                  Text('PawTrack', style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 40),
                   Column(
                     children: [
@@ -130,7 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                         hintText: "Email",
                         obscureText: false,
                         controller: emailController,
-                        validator: (value) => value!.isEmpty || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)
+                        validator: (value) =>
+                        value!.isEmpty || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)
                             ? 'Enter a valid email'
                             : null,
                       ),
@@ -149,23 +141,16 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               Checkbox(
                                 value: rememberMe,
-                                onChanged: (value) {
-                                  setState(() => rememberMe = value!);
-                                },
+                                onChanged: (value) => setState(() => rememberMe = value!),
                                 activeColor: Theme.of(context).colorScheme.primary,
                               ),
-                              Text(
-                                "Remember Me",
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
+                              Text("Remember Me", style: Theme.of(context).textTheme.bodyMedium),
                             ],
                           ),
                           GestureDetector(
                             onTap: _resetPassword,
-                            child: Text(
-                              "Forgot Password?",
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
+                            child: Text("Forgot Password?",
+                                style: Theme.of(context).textTheme.bodyMedium),
                           ),
                         ],
                       ),
@@ -175,14 +160,12 @@ class _LoginPageState extends State<LoginPage> {
                   isLoading
                       ? const CircularProgressIndicator()
                       : CustomButton(text: "Login", onTap: login),
-                  const SizedBox(height: 8), // Reduced spacing to match register page
+                  const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Don't have an account? ",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                      Text("Don't have an account? ",
+                          style: Theme.of(context).textTheme.bodyMedium),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text(

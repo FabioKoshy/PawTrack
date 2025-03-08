@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final void Function()? onTap;
+  final VoidCallback? onTap;
 
   const CustomButton({super.key, required this.text, required this.onTap});
 
@@ -20,7 +20,7 @@ class CustomButton extends StatelessWidget {
           child: Text(
             text,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white, // White text for contrast on pink button
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),

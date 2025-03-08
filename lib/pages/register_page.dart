@@ -7,7 +7,7 @@ import 'package:pawtrack/services/auth_service.dart';
 import 'package:pawtrack/utils/constants.dart';
 
 class RegisterPage extends StatefulWidget {
-  final void Function()? onTap;
+  final VoidCallback? onTap;
 
   const RegisterPage({super.key, required this.onTap});
 
@@ -33,9 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
         passwordController.text.trim(),
         usernameController.text.trim(),
       );
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
-      }
+      if (mounted) Navigator.pushReplacementNamed(context, AppRoutes.home);
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -49,13 +47,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Detect if the keyboard is visible
     final bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
-    final double topPadding = isKeyboardVisible ? 10.0 : 20.0; // Reduce padding when keyboard is up
+    final double topPadding = isKeyboardVisible ? 10.0 : 20.0;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      resizeToAvoidBottomInset: true, // Let Scaffold adjust for keyboard
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: AppPadding.pagePadding,
@@ -64,7 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: topPadding), // Dynamic top padding
+                SizedBox(height: topPadding),
                 SvgPicture.asset(
                   Theme.of(context).brightness == Brightness.dark
                       ? 'assets/images/paw_heart_dark_logo.svg'
@@ -73,10 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   width: 120,
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  'PawTrack',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+                Text('PawTrack', style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 20),
                 Column(
                   children: [
@@ -91,7 +85,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       hintText: "Email",
                       obscureText: false,
                       controller: emailController,
-                      validator: (value) => value!.isEmpty || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)
+                      validator: (value) =>
+                      value!.isEmpty || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)
                           ? 'Enter a valid email'
                           : null,
                     ),
@@ -100,32 +95,29 @@ class _RegisterPageState extends State<RegisterPage> {
                       hintText: "Password",
                       obscureText: true,
                       controller: passwordController,
-                      validator: (value) => value!.length < 6 ? 'Password must be 6+ characters' : null,
+                      validator: (value) =>
+                      value!.length < 6 ? 'Password must be 6+ characters' : null,
                     ),
                     const SizedBox(height: 10),
                     CustomTextField(
                       hintText: "Confirm Password",
                       obscureText: true,
                       controller: confirmPasswordController,
-                      validator: (value) => value != passwordController.text ? 'Passwords do not match' : null,
+                      validator: (value) =>
+                      value != passwordController.text ? 'Passwords do not match' : null,
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 isLoading
                     ? const CircularProgressIndicator()
-                    : CustomButton(
-                  text: "Register",
-                  onTap: register,
-                ),
+                    : CustomButton(text: "Register", onTap: register),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Already have an account? ",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                    Text("Already have an account? ",
+                        style: Theme.of(context).textTheme.bodyMedium),
                     GestureDetector(
                       onTap: widget.onTap,
                       child: Text(
