@@ -43,24 +43,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
         hintStyle: Theme.of(context).textTheme.bodyMedium,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Colors.grey.shade600,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: Colors.grey.shade600, width: 2.0),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Colors.grey.shade600,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: Colors.grey.shade600, width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2.0),
         ),
         errorStyle: const TextStyle(color: Colors.red),
         suffixIcon: widget.obscureText
