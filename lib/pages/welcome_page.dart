@@ -4,6 +4,7 @@ import 'package:pawtrack/components/custom_button.dart';
 import 'package:pawtrack/auth/access_mode.dart';
 import 'package:provider/provider.dart';
 import 'package:pawtrack/theme/theme_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -13,7 +14,9 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  void navigateToAccessMode(BuildContext context) {
+  Future<void> _markWelcomeSeenAndNavigate(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasSeenWelcome', true);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const AccessMode()),
@@ -45,7 +48,7 @@ class _WelcomePageState extends State<WelcomePage> {
               ),
               Text(
                 'Where they roam, hearts rhythm, paws known, worries flown',
-                style: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+                style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               Row(
@@ -53,7 +56,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 children: [
                   Text(
                     "Light",
-                    style: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   Switch(
                     value: themeProvider.isDarkMode,
@@ -61,16 +64,19 @@ class _WelcomePageState extends State<WelcomePage> {
                       themeProvider.toggleTheme();
                     },
                     activeColor: Theme.of(context).colorScheme.primary,
+                    activeTrackColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                    inactiveThumbColor: Theme.of(context).colorScheme.onSurface,
+                    inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
                   ),
                   Text(
                     "Dark",
-                    style: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
               ),
               CustomButton(
                 text: "Get Started",
-                onTap: () => navigateToAccessMode(context),
+                onTap: () => _markWelcomeSeenAndNavigate(context),
               ),
             ],
           ),
