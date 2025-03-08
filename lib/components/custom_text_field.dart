@@ -1,48 +1,80 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final String hintText;
   final bool obscureText;
   final TextEditingController controller;
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     super.key,
     required this.hintText,
     required this.obscureText,
     required this.controller,
+    this.validator,
   });
 
   @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.obscureText;
+  }
+
+  void _toggleObscureText() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
+    return TextFormField(
+      controller: widget.controller,
+      obscureText: _obscureText,
       decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+        hintText: widget.hintText,
+        hintStyle: Theme.of(context).textTheme.bodyMedium,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: Colors.grey.shade600, // Dark grey border for visibility
-            width: 2.0, // Thicker border
+            color: Colors.grey.shade600,
+            width: 2.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: Colors.grey.shade600, // Consistent color when enabled
+            color: Colors.grey.shade600,
             width: 2.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary, // Pink when focused
+            color: Theme.of(context).colorScheme.primary,
             width: 2.0,
           ),
         ),
+        errorStyle: const TextStyle(color: Colors.red),
+        suffixIcon: widget.obscureText
+            ? IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          onPressed: _toggleObscureText,
+        )
+            : null,
       ),
-      obscureText: obscureText,
-      style: Theme.of(context).textTheme.bodyMedium, // Use theme default (black in light, white in dark)
+      style: Theme.of(context).textTheme.bodyMedium,
+      validator: widget.validator,
     );
   }
 }
