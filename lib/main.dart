@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:pawtrack/pages/access_mode.dart';
+import 'package:pawtrack/auth/access_mode.dart';
 import 'package:pawtrack/pages/home_page.dart';
 import 'package:pawtrack/pages/welcome_page.dart';
 import 'package:pawtrack/theme/theme.dart';
