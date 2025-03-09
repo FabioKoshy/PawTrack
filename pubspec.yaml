@@ -18,9 +18,10 @@ dependencies:
   shared_preferences: ^2.2.2      # For local persistence (welcome screen, pets)
   flutter_localizations:          # For localization support (from Part-1)
     sdk: flutter
-  flutter_dotenv: ^5.1.0          # For loading .env file with Firebase config
-  geolocator: ^12.0.0             # Added for location tracking in LocationTrackerPage
+  flutter_dotenv: ^5.2.1          # For loading .env file with Firebase config
+  geolocator: ^13.0.2             # Added for location tracking in LocationTrackerPage
   flutter_animate: ^4.5.0         # Added for AnimatedButton animations
+  fl_chart: ^0.70.2
 
 dev_dependencies:
   flutter_test:

@@ -49,5 +49,5 @@ android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 
 # Environment variable file
-.env
-env
+#.env
+#env
