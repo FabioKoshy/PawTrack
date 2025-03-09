@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pawtrack/pages/HeartRateTrendsPage.dart';
 
 class HeartRatePage extends StatefulWidget {
   final String petName;
@@ -12,7 +13,7 @@ class HeartRatePage extends StatefulWidget {
 class _HeartRatePageState extends State<HeartRatePage> {
   double currentBPM = 75.0;
   double averageBPM = 70.0;
-  double lowBPM = 60.0;
+  double lowBPM = 30.0;
   double highBPM = 90.0;
 
   @override
@@ -90,6 +91,54 @@ class _HeartRatePageState extends State<HeartRatePage> {
                   Text('${highBPM.toStringAsFixed(1)} BPM', style: const TextStyle(fontSize: 16)),
                 ],
               ),
+            ),
+            const SizedBox(height: 50), // Reduced space to fit the new button
+            Row(
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    // Add functionality for "Start Tracking" button
+                  },
+                  child: const Text("Start Tracking"),
+                ),
+                const Spacer(), // Pushes the next widget to the right
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    // Add functionality for "Stop Tracking" button
+                  },
+                  child: const Text("Stop Tracking"),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20), // Space between the two buttons
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HeartRateTrendsPage(
+                      petName: widget.petName,
+                      currentBPM: currentBPM,
+                      lowBPM: lowBPM,
+                      averageBPM: averageBPM,
+                      highBPM: highBPM,
+                    ),
+                  ),
+                );
+              },
+              child: const Text("Trends"),
             ),
           ],
         ),
