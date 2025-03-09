@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pawtrack/components/square_button.dart';
@@ -6,9 +7,12 @@ import 'package:pawtrack/pages/heart_rate_page.dart';
 import 'package:pawtrack/pages/location_tracker_page.dart';
 import 'package:pawtrack/pages/activity_tracker_page.dart';
 import 'package:pawtrack/pages/notifications_page.dart';
+import 'package:pawtrack/pages/pet_profile_page.dart';
 import 'package:pawtrack/pages/settings_page.dart';
 import 'package:pawtrack/services/auth_service.dart';
+import 'package:pawtrack/services/pet_service.dart';
 import 'package:pawtrack/utils/constants.dart';
+import 'package:pawtrack/models/pet.dart'; // Ensure this import is present
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,81 +22,68 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> pets = [];
+  final PetService _petService = PetService();
   String? selectedButton;
-
-  void addPet(String petName) {
-    setState(() {
-      pets.add(petName);
-    });
-  }
 
   void openPetSelection(BuildContext context, String buttonType, Widget page) {
     setState(() {
       selectedButton = buttonType;
     });
 
-    if (pets.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("No pets available. Add a pet first.")),
-      );
-      return;
-    }
-
     showModalBottomSheet(
       context: context,
       isDismissible: true,
       shape: RoundedRectangleBorder(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-        side: BorderSide(color: Colors.pink.shade800, width: 3), // Added border
+        side: BorderSide(color: Colors.pink.shade800, width: 3),
       ),
       builder: (context) {
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            Navigator.pop(context);
-            setState(() => selectedButton = null);
+        return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(_petService.userId)
+              .collection('pets')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(child: Text("No pets available. Add a pet first."));
+            }
+            final pets = snapshot.data!.docs.map((doc) => Pet.fromFirestore(doc)).toList();
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: pets.length,
+              itemBuilder: (context, index) {
+                final pet = pets[index];
+                return ListTile(
+                  title: Text(pet.name),
+                  onTap: () {
+                    Navigator.pop(context);
+                    if (page is HeartRatePage) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HeartRatePage(petName: pet.name),
+                        ),
+                      );
+                    } else if (page is LocationTrackerPage) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LocationTrackerPage()),
+                      );
+                    } else if (page is ActivityTrackerPage) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ActivityTrackerPage()),
+                      );
+                    }
+                  },
+                );
+              },
+            );
           },
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: pets.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(
-                  pets[index],
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  if (page is HeartRatePage) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HeartRatePage(petName: pets[index])),
-                    );
-                  } else if (page is LocationTrackerPage) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LocationTrackerPage()),
-                    );
-                  } else if (page is ActivityTrackerPage) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ActivityTrackerPage()),
-                    );
-                  }
-                },
-              );
-            },
-          ),
         );
       },
-    ).whenComplete(() {
-      setState(() => selectedButton = null);
-    });
+    ).whenComplete(() => setState(() => selectedButton = null));
   }
 
   @override
@@ -125,7 +116,6 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SvgPicture.asset(logoPath, height: 40),
                         const SizedBox(width: 10),
@@ -183,8 +173,7 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.location_on,
                           color: Theme.of(context).colorScheme.secondary,
                           isSelected: selectedButton == "Location",
-                          onTap: () =>
-                              openPetSelection(context, "Location", const LocationTrackerPage()),
+                          onTap: () => openPetSelection(context, "Location", const LocationTrackerPage()),
                         ),
                       ),
                       Expanded(
@@ -193,39 +182,48 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.pets,
                           color: Theme.of(context).colorScheme.primary,
                           isSelected: selectedButton == "Activity",
-                          onTap: () =>
-                              openPetSelection(context, "Activity", const ActivityTrackerPage()),
+                          onTap: () => openPetSelection(context, "Activity", const ActivityTrackerPage()),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border:
-                        Border.all(color: Theme.of(context).colorScheme.secondary, width: 2),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.all(10),
-                      child: pets.isEmpty
-                          ? const Center(child: Text("No pets added yet. Click 'Add Pet' to start!"))
-                          : ListView.builder(
-                        itemCount: pets.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Text(
-                              pets[index],
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        },
-                      ),
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(_petService.userId)
+                          .collection('pets')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return const Center(child: Text("No pets added yet."));
+                        }
+                        final pets = snapshot.data!.docs
+                            .map((doc) => Pet.fromFirestore(doc))
+                            .toList();
+                        return ListView.builder(
+                          itemCount: pets.length,
+                          itemBuilder: (context, index) {
+                            final pet = pets[index];
+                            return ListTile(
+                              leading: const Icon(Icons.pets), // Replace image with icon
+                              title: Text(pet.name),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PetProfilePage(pet: pet),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -234,14 +232,13 @@ class _HomePageState extends State<HomePage> {
                       backgroundColor: Colors.pink.shade300,
                       foregroundColor: Colors.white,
                     ),
-                    onPressed: () async {
-                      final petName = await Navigator.push(
+                    onPressed: () {
+                      Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const AddPetPage()),
                       );
-                      if (petName != null && petName is String) addPet(petName);
                     },
-                    child: const Text("Add Pet"),
+                    child: const Text("Manage Pets"),
                   ),
                 ],
               ),

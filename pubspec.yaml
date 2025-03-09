@@ -1,8 +1,6 @@
 name: pawtrack
 description: A new Flutter project.
-
 publish_to: 'none'
-
 version: 1.0.0+1
 
 environment:
@@ -11,21 +9,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^3.12.1          # For Firebase initialization
-  firebase_auth: ^5.5.1           # For Firebase authentication
-  provider: ^6.1.1                # For state management (ThemeProvider)
-  flutter_svg: ^2.0.9             # For SVG logo rendering
-  shared_preferences: ^2.2.2      # For local persistence (welcome screen, pets)
-  flutter_localizations:          # For localization support (from Part-1)
-    sdk: flutter
-  flutter_dotenv: ^5.1.0          # For loading .env file with Firebase config
-  geolocator: ^12.0.0             # Added for location tracking in LocationTrackerPage
-  flutter_animate: ^4.5.0         # Added for AnimatedButton animations
+  firebase_core: ^2.24.0          # Firebase initialization
+  firebase_auth: ^4.15.0          # Firebase authentication
+  cloud_firestore: ^4.13.0        # Firestore for pet data
+  provider: ^6.1.1                # State management (ThemeProvider)
+  flutter_svg: ^2.0.9             # SVG logo rendering
+  shared_preferences: ^2.2.2      # Local persistence (welcome screen, etc.)
+  flutter_dotenv: ^5.1.0          # Loading .env file with Firebase config
+  geolocator: ^12.0.0             # Location tracking for LocationTrackerPage
+  flutter_animate: ^4.5.0         # AnimatedButton animations
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0           # For linting and code quality
+  flutter_lints: ^5.0.0           # Linting and code quality
 
 flutter:
   uses-material-design: true
