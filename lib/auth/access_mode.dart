@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pawtrack/pages/login_page.dart'; // Correct: login_page is in pages
-import 'package:pawtrack/pages/register_page.dart'; // Correct: register_page is in pages
+import 'package:pawtrack/pages/login_page.dart';
+import 'package:pawtrack/pages/register_page.dart';
 
 class AccessMode extends StatefulWidget {
   const AccessMode({super.key});
@@ -20,10 +20,6 @@ class _AccessModeState extends State<AccessMode> {
 
   @override
   Widget build(BuildContext context) {
-    if (showLoginPage) {
-      return LoginPage(onTap: togglePages);
-    } else {
-      return RegisterPage(onTap: togglePages);
-    }
+    return showLoginPage ? LoginPage(onTap: togglePages) : RegisterPage(onTap: togglePages);
   }
 }
