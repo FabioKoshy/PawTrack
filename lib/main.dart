@@ -12,7 +12,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables
   await dotenv.load(fileName: ".env");
+
+  // Initialize Firebase with options from .env
   await Firebase.initializeApp(
     options: FirebaseOptions(
       apiKey: dotenv.env['FIREBASE_API_KEY']!,
@@ -22,6 +26,8 @@ void main() async {
       storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
     ),
   );
+
+  // Run the app inside ChangeNotifierProvider
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
