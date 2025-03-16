@@ -6,6 +6,7 @@ class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      testing commit mia
       appBar: AppBar(
         title: const Text("Notifications"),
         backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2), // Added
