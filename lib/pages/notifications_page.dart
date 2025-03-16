@@ -17,7 +17,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Stream<int> getHeartRateStream() async* {
     List<int> heartRates = [65, 72, 110, 45, 85, 125, 60]; // Example values
     for (int rate in heartRates) {
-      await Future.delayed(Duration(seconds: 3)); // Simulate data updates
       yield rate;
     }
   }
