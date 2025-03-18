@@ -12,6 +12,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -20,17 +21,23 @@ android {
 
     defaultConfig {
         applicationId = "com.example.PawTrack.pawtrack"
-        minSdkVersion(23)
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+
 
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+dependencies {
+    implementation("androidx.core:core-ktx:1.9.0") // Make sure core-ktx is added
+    add("coreLibraryDesugaring", "com.android.tools:desugar_jdk_libs:1.2.2")
 }
 
 flutter {
