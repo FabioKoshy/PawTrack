@@ -15,6 +15,7 @@ dependencies:
   fl_chart: ^0.63.0
   firebase_core: 3.12.1          # For Firebase initialization
   firebase_auth: ^5.5.1           # For Firebase authentication
+  firebase_database: ^11.3.4      # For Firebase Realtime Database
   provider: ^6.1.1                # For state management (ThemeProvider)
   flutter_svg: ^2.0.9             # For SVG logo rendering
   shared_preferences: ^2.2.2      # For local persistence (welcome screen, pets)

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawtrack/pages/HeartRateTrendsPage.dart';
 
 class HeartRatePage extends StatefulWidget {
@@ -11,114 +12,73 @@ class HeartRatePage extends StatefulWidget {
 }
 
 class _HeartRatePageState extends State<HeartRatePage> {
-  double currentBPM = 75.0;
-  double averageBPM = 70.0;
-  double lowBPM = 30.0;
-  double highBPM = 90.0;
+  double currentBPM = 0.0;
+  double averageBPM = 0.0;
+  double lowBPM = 0.0;
+  double highBPM = 0.0;
+  bool trackingEnabled = false;
+  List<double> bpmHistory = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHeartRateData();
+  }
+
+  // Fetch heart rate data from Firebase in real-time
+  void fetchHeartRateData() {
+    FirebaseFirestore.instance.collection('sensor').snapshots().listen((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        var data = snapshot.docs.first.data();
+        setState(() {
+          currentBPM = (data['current_bpm'] ?? 0).toDouble();
+          lowBPM = (data['stats']['low_bpm'] ?? 0).toDouble();
+          averageBPM = (data['stats']['avg_bpm'] ?? 0).toDouble();
+          highBPM = (data['stats']['high_bpm'] ?? 0).toDouble();
+          trackingEnabled = data['tracking'] ?? false;
+
+          if (trackingEnabled) {
+            bpmHistory.add(currentBPM); // Add current BPM to history for trends
+            if (bpmHistory.length > 50) {
+              bpmHistory.removeAt(0); // Keep history size limited
+            }
+          }
+        });
+      }
+    });
+  }
+
+  // Function to update tracking status in Firebase
+  void updateTrackingStatus(bool status) {
+    FirebaseFirestore.instance.collection('sensor').doc('tracking').set({'tracking': status});
+    setState(() => trackingEnabled = status);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("${widget.petName}'s Heart Rate"),
-        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2), // Reference style
+        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(vertical: 8.0),
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Current:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text('${currentBPM.toStringAsFixed(1)} BPM', style: const TextStyle(fontSize: 16)),
-                ],
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(vertical: 8.0),
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Low:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text('${lowBPM.toStringAsFixed(1)} BPM', style: const TextStyle(fontSize: 16)),
-                ],
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(vertical: 8.0),
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Average:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text('${averageBPM.toStringAsFixed(1)} BPM', style: const TextStyle(fontSize: 16)),
-                ],
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(vertical: 8.0),
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('High:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text('${highBPM.toStringAsFixed(1)} BPM', style: const TextStyle(fontSize: 16)),
-                ],
-              ),
-            ),
-            const SizedBox(height: 50), // Reduced space to fit the new button
+            _buildBPMCard('Current:', currentBPM),
+            _buildBPMCard('Low:', lowBPM),
+            _buildBPMCard('Average:', averageBPM),
+            _buildBPMCard('High:', highBPM),
+            const SizedBox(height: 50),
             Row(
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: () {
-                    // Add functionality for "Start Tracking" button
-                  },
-                  child: const Text("Start Tracking"),
-                ),
-                const Spacer(), // Pushes the next widget to the right
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: () {
-                    // Add functionality for "Stop Tracking" button
-                  },
-                  child: const Text("Stop Tracking"),
-                ),
+                _buildTrackingButton('Start Tracking', true),
+                const Spacer(),
+                _buildTrackingButton('Stop Tracking', false),
               ],
             ),
-            const SizedBox(height: 20), // Space between the two buttons
+            const SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
@@ -130,10 +90,7 @@ class _HeartRatePageState extends State<HeartRatePage> {
                   MaterialPageRoute(
                     builder: (context) => HeartRateTrendsPage(
                       petName: widget.petName,
-                      currentBPM: currentBPM,
-                      lowBPM: lowBPM,
-                      averageBPM: averageBPM,
-                      highBPM: highBPM,
+                      bpmHistory: bpmHistory,
                     ),
                   ),
                 );
@@ -143,6 +100,38 @@ class _HeartRatePageState extends State<HeartRatePage> {
           ],
         ),
       ),
+    );
+  }
+
+  // Widget to build BPM information card
+  Widget _buildBPMCard(String label, double bpmValue) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text('${bpmValue.toStringAsFixed(1)} BPM', style: const TextStyle(fontSize: 16)),
+        ],
+      ),
+    );
+  }
+
+  // Widget to build tracking buttons
+  Widget _buildTrackingButton(String label, bool start) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
+      ),
+      onPressed: () => updateTrackingStatus(start),
+      child: Text(label),
     );
   }
 }
