@@ -17,6 +17,10 @@ android/build/
 android/.gradle/
 android/app/build/
 android/local.properties
+android/**/*.aar
+android/**/intermediates/
+android/**/outputs/
+android/**/tmp/
 
 # macOS generated files
 macos/Flutter/GeneratedPluginRegistrant.swift
