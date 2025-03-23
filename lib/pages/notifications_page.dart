@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// Comment out this import for now
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
 
   @override
-  _NotificationsPageState createState() => _NotificationsPageState();
+  State<NotificationsPage> createState() => _NotificationsPageState();
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  final FlutterLocalNotificationsPlugin _notificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+  // Comment out the notifications plugin
+  // final FlutterLocalNotificationsPlugin _notificationsPlugin =
+  //   FlutterLocalNotificationsPlugin();
+
   List<String> notifications = [];
 
   // Simulated heartbeat stream (Replace with real data source)
   Stream<int> getHeartRateStream() async* {
     List<int> heartRates = [65, 72, 110, 45, 85, 125, 60]; // Example values
     for (int rate in heartRates) {
+      await Future.delayed(const Duration(seconds: 2)); // Add delay for simulation
       yield rate;
     }
   }
@@ -24,18 +28,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   void initState() {
     super.initState();
-    _initializeNotifications();
+    // _initializeNotifications();
     _listenToHeartRate();
   }
 
-  void _initializeNotifications() async {
-    const AndroidInitializationSettings androidInitSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initSettings =
-    InitializationSettings(android: androidInitSettings);
-
-    await _notificationsPlugin.initialize(initSettings);
-  }
+  // Commented out for now
+  // void _initializeNotifications() async {
+  //   const AndroidInitializationSettings androidInitSettings =
+  //     AndroidInitializationSettings('@mipmap/ic_launcher');
+  //   const InitializationSettings initSettings =
+  //     InitializationSettings(android: androidInitSettings);
+  //   await _notificationsPlugin.initialize(initSettings);
+  // }
 
   void _listenToHeartRate() {
     getHeartRateStream().listen((int heartRate) {
@@ -48,24 +52,27 @@ class _NotificationsPageState extends State<NotificationsPage> {
     });
   }
 
+  // Simplified to just a console log for now
   Future<void> _showNotification(int heartRate) async {
-    const AndroidNotificationDetails androidDetails =
-    AndroidNotificationDetails(
-      'heart_rate_channel',
-      'Heart Rate Alerts',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
+    // Debug output instead of showing a real notification
+    debugPrint('Would show notification: Heart rate is $heartRate BPM!');
 
-    const NotificationDetails details =
-    NotificationDetails(android: androidDetails);
-
-    await _notificationsPlugin.show(
-      0,
-      'Heart Rate Alert',
-      'Heart rate is $heartRate BPM!',
-      details,
-    );
+    // Commented out actual notification logic
+    // const AndroidNotificationDetails androidDetails =
+    //   AndroidNotificationDetails(
+    //     'heart_rate_channel',
+    //     'Heart Rate Alerts',
+    //     importance: Importance.high,
+    //     priority: Priority.high,
+    //   );
+    // const NotificationDetails details =
+    //   NotificationDetails(android: androidDetails);
+    // await _notificationsPlugin.show(
+    //   0,
+    //   'Heart Rate Alert',
+    //   'Heart rate is $heartRate BPM!',
+    //   details,
+    // );
   }
 
   @override
@@ -73,7 +80,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notifications"),
-        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+        backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(50), // Fixed opacity issue
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,4 +112,3 @@ class _NotificationsPageState extends State<NotificationsPage> {
     );
   }
 }
-

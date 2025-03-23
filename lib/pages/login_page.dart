@@ -6,6 +6,7 @@ import 'package:pawtrack/components/custom_text_field.dart';
 import 'package:pawtrack/services/auth_service.dart';
 import 'package:pawtrack/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback? onTap;
@@ -24,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   bool rememberMe = false;
   bool isLoading = false;
   late SharedPreferences prefs;
+  String? errorMessage;
 
   @override
   void initState() {
@@ -32,61 +34,189 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _initPrefs() async {
-    prefs = await SharedPreferences.getInstance();
-    rememberMe = prefs.getBool('rememberMe') ?? false;
-    if (rememberMe) {
-      emailController.text = prefs.getString('email') ?? '';
-      passwordController.text = prefs.getString('password') ?? '';
+    try {
+      prefs = await SharedPreferences.getInstance();
+      rememberMe = prefs.getBool('rememberMe') ?? false;
+      if (rememberMe) {
+        emailController.text = prefs.getString('email') ?? '';
+        passwordController.text = prefs.getString('password') ?? '';
+      }
+      if (mounted) setState(() {});
+    } catch (e) {
+      print("Error initializing preferences: $e");
+      // Continue without loading preferences
     }
-    if (mounted) setState(() {});
+  }
+
+  void _printDebugInfo() {
+    print("=== DEBUG INFO ===");
+    print("Email: ${emailController.text}");
+    print("Password length: ${passwordController.text.length}");
+    print("Remember me: $rememberMe");
   }
 
   Future<void> login() async {
-    if (!_formKey.currentState!.validate() || isLoading) return;
+    _printDebugInfo();
+
+    // Clear previous error
+    setState(() {
+      errorMessage = null;
+    });
+
+    if (!_formKey.currentState!.validate() || isLoading) {
+      print("Form validation failed or already loading");
+      return;
+    }
+
     setState(() => isLoading = true);
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
+
+    print("Attempting login with email: $email");
+
     try {
-      await _authService.login(email, password);
-      await prefs.setBool('rememberMe', rememberMe);
-      if (rememberMe) {
-        await prefs.setString('email', email);
-        await prefs.setString('password', password);
-      } else {
-        await prefs.remove('email');
-        await prefs.remove('password');
+      print("Calling Firebase authentication...");
+      User? user = await _authService.login(email, password);
+      print("Login result: ${user != null ? 'Success' : 'Failed'}, User ID: ${user?.uid}");
+
+      // Only save preferences if login was successful
+      try {
+        await prefs.setBool('rememberMe', rememberMe);
+        if (rememberMe) {
+          await prefs.setString('email', email);
+          await prefs.setString('password', password);
+          print("Credentials saved to SharedPreferences");
+        } else {
+          await prefs.remove('email');
+          await prefs.remove('password');
+          print("Credentials removed from SharedPreferences");
+        }
+      } catch (e) {
+        print("Warning: Failed to save preferences: $e");
+        // Continue anyway since login was successful
       }
-      if (mounted) Navigator.pushReplacementNamed(context, AppRoutes.home);
+
+      if (mounted) {
+        print("Navigating to home page");
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      }
     } on FirebaseAuthException catch (e) {
+      print("FirebaseAuthException: Code: ${e.code}, Message: ${e.message}");
+
+      // Provide user-friendly error messages
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'No user found with this email.';
+          break;
+        case 'wrong-password':
+          message = 'Wrong password provided for this user.';
+          break;
+        case 'invalid-email':
+          message = 'The email address is not valid.';
+          break;
+        case 'user-disabled':
+          message = 'This user account has been disabled.';
+          break;
+        case 'too-many-requests':
+          message = 'Too many login attempts. Please try again later.';
+          break;
+        default:
+          message = e.message ?? 'Login failed. Please try again.';
+      }
+
+      setState(() {
+        errorMessage = message;
+      });
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Login failed'), backgroundColor: Colors.red),
+          SnackBar(content: Text(message), backgroundColor: Colors.red),
+        );
+      }
+    } on TimeoutException catch (e) {
+      print("Timeout error: $e");
+      setState(() {
+        errorMessage = "Login timed out. Please check your connection.";
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("Login timed out. Please check your connection."),
+              backgroundColor: Colors.red
+          ),
+        );
+      }
+    } catch (e) {
+      print("Unexpected error during login: $e");
+      setState(() {
+        errorMessage = "An unexpected error occurred. Please try again.";
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('An unexpected error occurred. Please try again.'),
+              backgroundColor: Colors.red
+          ),
         );
       }
     } finally {
       if (mounted) setState(() => isLoading = false);
+      print("Login process completed");
     }
   }
 
   Future<void> _resetPassword() async {
     String email = emailController.text.trim();
+    print("Attempting password reset for email: $email");
+
     if (email.isEmpty || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+      print("Invalid email format for password reset");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a valid email'), backgroundColor: Colors.red),
       );
       return;
     }
+
     try {
+      print("Calling Firebase resetPassword...");
       await _authService.resetPassword(email);
+      print("Password reset email sent successfully");
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Password reset email sent!')),
         );
       }
     } on FirebaseAuthException catch (e) {
+      print("FirebaseAuthException during reset: Code: ${e.code}, Message: ${e.message}");
+
+      // Provide user-friendly error messages
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'No user found with this email.';
+          break;
+        case 'invalid-email':
+          message = 'The email address is not valid.';
+          break;
+        default:
+          message = e.message ?? 'Failed to send reset email. Please try again.';
+      }
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Failed to send reset email'), backgroundColor: Colors.red),
+          SnackBar(content: Text(message), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      print("Unexpected error during password reset: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('An unexpected error occurred. Please try again.'),
+              backgroundColor: Colors.red
+          ),
         );
       }
     }
@@ -117,6 +247,23 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 40),
                   Column(
                     children: [
+                      if (errorMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.red.shade300),
+                            ),
+                            child: Text(
+                              errorMessage!,
+                              style: TextStyle(color: Colors.red.shade700),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
                       CustomTextField(
                         hintText: "Email",
                         obscureText: false,

@@ -14,18 +14,34 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load environment variables
-  await dotenv.load(fileName: ".env");
+  try {
+    await dotenv.load(fileName: ".env");
+    print("Environment variables loaded successfully");
+  } catch (e) {
+    print("Error loading environment variables: $e");
+    // Continue anyway, but Firebase init might fail
+  }
 
   // Initialize Firebase with options from .env
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: dotenv.env['FIREBASE_API_KEY']!,
-      appId: dotenv.env['FIREBASE_APP_ID']!,
-      messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID']!,
-      projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
-      storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
-    ),
-  );
+  try {
+    print("Initializing Firebase with:");
+    print("API Key: ${dotenv.env['FIREBASE_API_KEY']?.substring(0, 3)}...");
+    print("Project ID: ${dotenv.env['FIREBASE_PROJECT_ID']}");
+
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
+        appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
+        messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
+        projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? '',
+        storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? '',
+      ),
+    );
+    print("Firebase initialized successfully");
+  } catch (e) {
+    print("Error initializing Firebase: $e");
+    // Continue anyway, but auth will fail
+  }
 
   // Run the app inside ChangeNotifierProvider
   runApp(
@@ -48,7 +64,6 @@ class MyApp extends StatelessWidget {
       theme: lightMode,
       darkTheme: darkMode,
       themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      initialRoute: AppRoutes.root,
       routes: {
         AppRoutes.root: (context) => const AuthWrapper(),
         AppRoutes.welcome: (context) => const WelcomePage(),
@@ -63,8 +78,13 @@ class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
   Future<bool> _hasSeenWelcome() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('hasSeenWelcome') ?? false;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool('hasSeenWelcome') ?? false;
+    } catch (e) {
+      print("Error checking welcome preference: $e");
+      return false;
+    }
   }
 
   @override
@@ -72,12 +92,17 @@ class AuthWrapper extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+        // Add debug print
+        print("Auth state changed: ${snapshot.connectionState}, hasData: ${snapshot.hasData}, data: ${snapshot.data?.uid}");
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (snapshot.hasData) {
+
+        if (snapshot.hasData && snapshot.data != null) {
           return const HomePage();
         }
+
         return FutureBuilder<bool>(
           future: _hasSeenWelcome(),
           builder: (context, welcomeSnapshot) {

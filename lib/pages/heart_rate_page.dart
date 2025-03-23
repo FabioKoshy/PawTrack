@@ -1,5 +1,7 @@
+// File: heart_rate_page.dart (Updated for Realtime Database + Trends)
+
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:pawtrack/pages/HeartRateTrendsPage.dart';
 
 class HeartRatePage extends StatefulWidget {
@@ -19,39 +21,36 @@ class _HeartRatePageState extends State<HeartRatePage> {
   bool trackingEnabled = false;
   List<double> bpmHistory = [];
 
+  final db = FirebaseDatabase.instance.ref();
+
   @override
   void initState() {
     super.initState();
-    fetchHeartRateData();
+    listenToHeartRate();
   }
 
-  // Fetch heart rate data from Firebase in real-time
-  void fetchHeartRateData() {
-    FirebaseFirestore.instance.collection('sensor').snapshots().listen((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        var data = snapshot.docs.first.data();
+  void listenToHeartRate() {
+    db.child("heartrate").onValue.listen((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+      if (data != null) {
         setState(() {
           currentBPM = (data['current_bpm'] ?? 0).toDouble();
-          lowBPM = (data['stats']['low_bpm'] ?? 0).toDouble();
-          averageBPM = (data['stats']['avg_bpm'] ?? 0).toDouble();
-          highBPM = (data['stats']['high_bpm'] ?? 0).toDouble();
-          trackingEnabled = data['tracking'] ?? false;
+          lowBPM = (data['stats']?['low_bpm'] ?? 0).toDouble();
+          averageBPM = (data['stats']?['avg_bpm'] ?? 0).toDouble();
+          highBPM = (data['stats']?['high_bpm'] ?? 0).toDouble();
 
           if (trackingEnabled) {
-            bpmHistory.add(currentBPM); // Add current BPM to history for trends
-            if (bpmHistory.length > 50) {
-              bpmHistory.removeAt(0); // Keep history size limited
-            }
+            bpmHistory.add(currentBPM);
+            if (bpmHistory.length > 50) bpmHistory.removeAt(0);
           }
         });
       }
     });
   }
 
-  // Function to update tracking status in Firebase
-  void updateTrackingStatus(bool status) {
-    FirebaseFirestore.instance.collection('sensor').doc('tracking').set({'tracking': status});
-    setState(() => trackingEnabled = status);
+  void updateTrackingStatus(bool enable) async {
+    await db.child("sensor/tracking").set(enable);
+    setState(() => trackingEnabled = enable);
   }
 
   @override
@@ -103,7 +102,6 @@ class _HeartRatePageState extends State<HeartRatePage> {
     );
   }
 
-  // Widget to build BPM information card
   Widget _buildBPMCard(String label, double bpmValue) {
     return Container(
       width: double.infinity,
@@ -123,7 +121,6 @@ class _HeartRatePageState extends State<HeartRatePage> {
     );
   }
 
-  // Widget to build tracking buttons
   Widget _buildTrackingButton(String label, bool start) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
