@@ -1,53 +1,78 @@
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Flutter/Dart build artifacts
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
-/build/
+build/
+coverage/
+*.iml
+*.idea/
+*.ipr
+*.iws
 
-# Symbolication related
-app.*.symbols
+# Android build artifacts
+android/build/
+android/.gradle/
+android/app/build/
+android/local.properties
 
-# Obfuscation related
-app.*.map.json
+# macOS generated files
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Windows generated files
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+windows/flutter/generated_plugins.cmake
 
-# Sensitive Firebase files
-firebase.json
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
+# iOS generated files
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/AppFrameworkInfo.plist
 
-# Environment variable file
-#.env
-#env
+# Miscellaneous
+*.DS_Store
+.env
+*.log
+*.lockb
+*.swp
+*.swo
+*.swn
+*.swm
+*.swpx
+*.swx
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.original
+*.rej
+*.patch
+*.diff
+*.pid
+*.pid.lock
+*.pidlock
+*.key
+*.pem
+*.cer
+*.cert
+*.crt
+*.pub
+*.gpg
+*.asc
+*.sig
+*.signature
+*.md5
+*.sha1
+*.sha256
+*.sha512
+*.hash
+*.sqlite
+*.db
+*.db-shm
+*.db-wal
+*.sqlite-shm
+*.sqlite-wal

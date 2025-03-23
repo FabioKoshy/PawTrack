@@ -22,29 +22,34 @@ class AnimatedButton extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        width: MediaQuery.of(context).size.width * 0.85,
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        width: 120,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Theme.of(context).colorScheme.onPrimary, size: 26),
-            const SizedBox(width: 12),
-            Text(
-              text,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            Icon(icon, color: Theme.of(context).colorScheme.onPrimary, size: 16),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                text,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
             ),
           ],

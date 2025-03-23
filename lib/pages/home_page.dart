@@ -12,7 +12,7 @@ import 'package:pawtrack/pages/settings_page.dart';
 import 'package:pawtrack/services/auth_service.dart';
 import 'package:pawtrack/services/pet_service.dart';
 import 'package:pawtrack/utils/constants.dart';
-import 'package:pawtrack/models/pet.dart'; // Ensure this import is present
+import 'package:pawtrack/models/pet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -58,19 +58,21 @@ class _HomePageState extends State<HomePage> {
                   title: Text(pet.name),
                   onTap: () {
                     Navigator.pop(context);
-                    if (page is HeartRatePage) {
+                    if (buttonType == "Heart") {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => HeartRatePage(petName: pet.name),
                         ),
                       );
-                    } else if (page is LocationTrackerPage) {
+                    } else if (buttonType == "Location") {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const LocationTrackerPage()),
+                        MaterialPageRoute(
+                          builder: (context) => LocationTrackerPage(petId: pet.id),
+                        ),
                       );
-                    } else if (page is ActivityTrackerPage) {
+                    } else if (buttonType == "Activity") {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const ActivityTrackerPage()),
@@ -173,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.location_on,
                           color: Theme.of(context).colorScheme.secondary,
                           isSelected: selectedButton == "Location",
-                          onTap: () => openPetSelection(context, "Location", const LocationTrackerPage()),
+                          onTap: () => openPetSelection(context, "Location", const LocationTrackerPage(petId: "")),
                         ),
                       ),
                       Expanded(
@@ -210,7 +212,7 @@ class _HomePageState extends State<HomePage> {
                           itemBuilder: (context, index) {
                             final pet = pets[index];
                             return ListTile(
-                              leading: const Icon(Icons.pets), // Replace image with icon
+                              leading: const Icon(Icons.pets),
                               title: Text(pet.name),
                               onTap: () {
                                 Navigator.push(

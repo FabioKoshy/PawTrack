@@ -9,6 +9,8 @@ import 'package:pawtrack/theme/theme.dart';
 import 'package:pawtrack/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +45,9 @@ void main() async {
     // Continue anyway, but auth will fail
   }
 
+  // Request notification permission for Android 13+
+  await _requestNotificationPermission();
+
   // Run the app inside ChangeNotifierProvider
   runApp(
     ChangeNotifierProvider(
@@ -50,6 +55,24 @@ void main() async {
       child: const MyApp(),
     ),
   );
+}
+
+Future<void> _requestNotificationPermission() async {
+  // Request notification permission for Android 13+
+  if (await Permission.notification.isDenied) {
+    final status = await Permission.notification.request();
+    if (status.isDenied) {
+      print("Notification permission denied");
+    } else if (status.isPermanentlyDenied) {
+      print("Notification permission permanently denied. Please enable it in settings.");
+
+      await openAppSettings();
+    } else {
+      print("Notification permission granted");
+    }
+  } else {
+    print("Notification permission already granted");
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -92,7 +115,6 @@ class AuthWrapper extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // Add debug print
         print("Auth state changed: ${snapshot.connectionState}, hasData: ${snapshot.hasData}, data: ${snapshot.data?.uid}");
 
         if (snapshot.connectionState == ConnectionState.waiting) {
