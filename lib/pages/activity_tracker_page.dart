@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ActivityTrackerPage extends StatelessWidget {
-  const ActivityTrackerPage({super.key});
+  final String petId;
+
+  const ActivityTrackerPage({super.key, required this.petId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Activity Tracker"),
-        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2), // Added
+        title: const Text('Activity Tracker'),
       ),
-      body: const Center(child: Text("Activity Tracker Page - Coming Soon")),
+      body: Center(
+        child: Text('COMING SOON!! Activity tracking for pet with ID: $petId'),
+      ),
     );
   }
 }

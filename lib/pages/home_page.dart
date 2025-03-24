@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   final PetService _petService = PetService();
   String? selectedButton;
 
-  void openPetSelection(BuildContext context, String buttonType, Widget page) {
+  void openPetSelection(BuildContext context, String buttonType) {
     setState(() {
       selectedButton = buttonType;
     });
@@ -75,7 +75,9 @@ class _HomePageState extends State<HomePage> {
                     } else if (buttonType == "Activity") {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const ActivityTrackerPage()),
+                        MaterialPageRoute(
+                          builder: (context) => ActivityTrackerPage(petId: pet.id),
+                        ),
                       );
                     }
                   },
@@ -166,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.favorite,
                           color: Theme.of(context).colorScheme.primary,
                           isSelected: selectedButton == "Heart",
-                          onTap: () => openPetSelection(context, "Heart", HeartRatePage(petName: "")),
+                          onTap: () => openPetSelection(context, "Heart"),
                         ),
                       ),
                       Expanded(
@@ -175,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.location_on,
                           color: Theme.of(context).colorScheme.secondary,
                           isSelected: selectedButton == "Location",
-                          onTap: () => openPetSelection(context, "Location", const LocationTrackerPage(petId: "")),
+                          onTap: () => openPetSelection(context, "Location"),
                         ),
                       ),
                       Expanded(
@@ -184,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.pets,
                           color: Theme.of(context).colorScheme.primary,
                           isSelected: selectedButton == "Activity",
-                          onTap: () => openPetSelection(context, "Activity", const ActivityTrackerPage()),
+                          onTap: () => openPetSelection(context, "Activity"),
                         ),
                       ),
                     ],

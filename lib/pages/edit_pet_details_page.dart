@@ -3,27 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pawtrack/components/custom_button.dart';
 import 'package:pawtrack/components/custom_text_field.dart';
+import 'package:pawtrack/models/pet.dart';
 import 'package:pawtrack/services/pet_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class AddPetDetailsPage extends StatefulWidget {
-  const AddPetDetailsPage({super.key});
+class EditPetDetailsPage extends StatefulWidget {
+  final Pet pet;
+
+  const EditPetDetailsPage({super.key, required this.pet});
 
   @override
-  State<AddPetDetailsPage> createState() => _AddPetDetailsPageState();
+  State<EditPetDetailsPage> createState() => _EditPetDetailsPageState();
 }
 
-class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
+class _EditPetDetailsPageState extends State<EditPetDetailsPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController breedController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
   String? selectedDevice;
   File? _image;
+  String? _existingImageUrl;
   final List<String> mockBluetoothDevices = ['Device1', 'Device2', 'Device3'];
   final PetService _petService = PetService();
   final ImagePicker _picker = ImagePicker();
-  bool _isLoading = false; // Added loading state
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController.text = widget.pet.name;
+    ageController.text = widget.pet.age?.toString() ?? '';
+    breedController.text = widget.pet.breed ?? '';
+    weightController.text = widget.pet.weight?.toString() ?? '';
+    selectedDevice = widget.pet.bluetoothDeviceId;
+    _existingImageUrl = widget.pet.imageUrl;
+  }
 
   Future<void> _pickImage() async {
     PermissionStatus status = await Permission.photos.status;
@@ -79,7 +94,7 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
     );
   }
 
-  void _addPet() async {
+  void _updatePet() async {
     if (nameController.text.isEmpty || selectedDevice == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill required fields (Name and Bluetooth Device)')),
@@ -88,10 +103,17 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
     }
 
     setState(() {
-      _isLoading = true; // Show loading indicator
+      _isLoading = true;
     });
 
     try {
+      String? imageUrl = _existingImageUrl;
+      if (_image != null) {
+        print('Selected image path: ${_image!.path}');
+        imageUrl = await _petService.uploadPetImage(_image!, widget.pet.id);
+        print('New image URL: $imageUrl');
+      }
+
       int? age;
       if (ageController.text.isNotEmpty) {
         age = int.tryParse(ageController.text);
@@ -99,9 +121,6 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Age must be a valid number'), backgroundColor: Colors.red),
           );
-          setState(() {
-            _isLoading = false;
-          });
           return;
         }
       }
@@ -113,26 +132,34 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Weight must be a valid number'), backgroundColor: Colors.red),
           );
-          setState(() {
-            _isLoading = false;
-          });
           return;
         }
       }
 
-      await _petService.addPet(
-        nameController.text,
-        selectedDevice!,
+      await _petService.updatePet(
+        widget.pet.id,
+        name: nameController.text,
+        bluetoothDeviceId: selectedDevice!,
         age: age,
         breed: breedController.text.isNotEmpty ? breedController.text : null,
         weight: weight,
-        image: _image,
+        imageUrl: imageUrl,
       );
 
-      Navigator.pop(context, true);
+      final updatedPet = Pet(
+        id: widget.pet.id,
+        name: nameController.text,
+        bluetoothDeviceId: selectedDevice!,
+        age: age,
+        breed: breedController.text.isNotEmpty ? breedController.text : null,
+        weight: weight,
+        imageUrl: imageUrl,
+      );
+
+      Navigator.pop(context, updatedPet);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add pet: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text('Failed to update pet: $e'), backgroundColor: Colors.red),
       );
     } finally {
       setState(() {
@@ -144,7 +171,7 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Pet Details")),
+      appBar: AppBar(title: const Text("Edit Pet Details")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -154,7 +181,7 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
                 onTap: _pickImage,
                 child: CircleAvatar(
                   radius: 50,
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   child: _image != null
                       ? ClipOval(
                     child: Image.file(
@@ -162,6 +189,20 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
                       fit: BoxFit.cover,
                       width: 100,
                       height: 100,
+                    ),
+                  )
+                      : _existingImageUrl != null
+                      ? ClipOval(
+                    child: Image.network(
+                      _existingImageUrl!,
+                      fit: BoxFit.cover,
+                      width: 100,
+                      height: 100,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.camera_alt,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
                     ),
                   )
                       : const Icon(
@@ -253,7 +294,7 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
               const SizedBox(height: 20),
               _isLoading
                   ? const CircularProgressIndicator()
-                  : CustomButton(text: "Add Pet", onTap: _addPet),
+                  : CustomButton(text: "Update Pet", onTap: _updatePet),
             ],
           ),
         ),
