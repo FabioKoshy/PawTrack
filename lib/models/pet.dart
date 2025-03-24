@@ -4,11 +4,19 @@ class Pet {
   final String id;
   final String name;
   final String bluetoothDeviceId;
+  final int? age;
+  final String? breed;
+  final double? weight;
+  final String? imageUrl;
 
   Pet({
     required this.id,
     required this.name,
     required this.bluetoothDeviceId,
+    this.age,
+    this.breed,
+    this.weight,
+    this.imageUrl,
   });
 
   factory Pet.fromFirestore(DocumentSnapshot doc) {
@@ -17,6 +25,10 @@ class Pet {
       id: doc.id,
       name: data['name'] ?? '',
       bluetoothDeviceId: data['bluetoothDeviceId'] ?? '',
+      age: data['age'],
+      breed: data['breed'],
+      weight: data['weight']?.toDouble(),
+      imageUrl: data['imageUrl'],
     );
   }
 
@@ -24,6 +36,10 @@ class Pet {
     return {
       'name': name,
       'bluetoothDeviceId': bluetoothDeviceId,
+      'age': age,
+      'breed': breed,
+      'weight': weight,
+      'imageUrl': imageUrl,
     };
   }
 }

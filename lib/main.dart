@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +22,6 @@ void main() async {
     print("Environment variables loaded successfully");
   } catch (e) {
     print("Error loading environment variables: $e");
-    // Continue anyway, but Firebase init might fail
   }
 
   // Initialize Firebase with options from .env
@@ -42,7 +42,22 @@ void main() async {
     print("Firebase initialized successfully");
   } catch (e) {
     print("Error initializing Firebase: $e");
-    // Continue anyway, but auth will fail
+  }
+
+  // Initialize Supabase
+  try {
+    final supabaseUrl = dotenv.env['SUPABASE_URL'];
+    final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+    if (supabaseUrl == null || supabaseUrl.isEmpty || supabaseAnonKey == null || supabaseAnonKey.isEmpty) {
+      throw Exception('Supabase URL or Anon Key is missing in .env');
+    }
+    await supabase.Supabase.initialize( // Use alias
+      url: supabaseUrl,
+      anonKey: supabaseAnonKey,
+    );
+    print("Supabase initialized successfully");
+  } catch (e) {
+    print("Error initializing Supabase: $e");
   }
 
   // Request notification permission for Android 13+
@@ -58,14 +73,12 @@ void main() async {
 }
 
 Future<void> _requestNotificationPermission() async {
-  // Request notification permission for Android 13+
   if (await Permission.notification.isDenied) {
     final status = await Permission.notification.request();
     if (status.isDenied) {
       print("Notification permission denied");
     } else if (status.isPermanentlyDenied) {
       print("Notification permission permanently denied. Please enable it in settings.");
-
       await openAppSettings();
     } else {
       print("Notification permission granted");

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatefulWidget {
+class CustomTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
 
   const CustomTextField({
     super.key,
@@ -12,60 +13,24 @@ class CustomTextField extends StatefulWidget {
     required this.obscureText,
     required this.controller,
     this.validator,
+    this.keyboardType,
   });
-
-  @override
-  State<CustomTextField> createState() => _CustomTextFieldState();
-}
-
-class _CustomTextFieldState extends State<CustomTextField> {
-  late bool _obscureText;
-
-  @override
-  void initState() {
-    super.initState();
-    _obscureText = widget.obscureText;
-  }
-
-  void _toggleObscureText() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: widget.controller,
-      obscureText: _obscureText,
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
-        hintText: widget.hintText,
-        hintStyle: Theme.of(context).textTheme.bodyMedium,
+        hintText: hintText,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade600, width: 2.0),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade600, width: 2.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2.0),
-        ),
-        errorStyle: const TextStyle(color: Colors.red),
-        suffixIcon: widget.obscureText
-            ? IconButton(
-          icon: Icon(
-            _obscureText ? Icons.visibility_off : Icons.visibility,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          onPressed: _toggleObscureText,
-        )
-            : null,
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surface,
       ),
-      style: Theme.of(context).textTheme.bodyMedium,
-      validator: widget.validator,
+      validator: validator,
     );
   }
 }
