@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../../../COEN 390/esp32s3config"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}
