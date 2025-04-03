@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 
 class HeartRateTrendsPage extends StatelessWidget {
   final String petName;
@@ -14,21 +13,26 @@ class HeartRateTrendsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text("$petName's Heart Rate Trends"),
-        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+        backgroundColor: theme.colorScheme.primary.withValues(
+          red: theme.colorScheme.primary.red,
+          green: theme.colorScheme.primary.green,
+          blue: theme.colorScheme.primary.blue,
+          alpha: 51, // 0.2 * 255 ≈ 51
+        ),
       ),
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: theme.colorScheme.surface,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Text(
               "Heart Rate Overview",
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -42,7 +46,7 @@ class HeartRateTrendsPage extends StatelessWidget {
                     leftTitles: AxisTitles(
                       axisNameWidget: Text(
                         "Heart Rate (BPM)",
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -53,7 +57,7 @@ class HeartRateTrendsPage extends StatelessWidget {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             value.toInt().toString(),
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
+                            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
                           );
                         },
                       ),
@@ -61,7 +65,7 @@ class HeartRateTrendsPage extends StatelessWidget {
                     bottomTitles: AxisTitles(
                       axisNameWidget: Text(
                         "Time",
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -77,18 +81,23 @@ class HeartRateTrendsPage extends StatelessWidget {
                           .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
                           .toList(),
                       isCurved: true,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: theme.colorScheme.primary,
                       dotData: const FlDotData(show: true),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                        color: theme.colorScheme.primary.withValues(
+                          red: theme.colorScheme.primary.red,
+                          green: theme.colorScheme.primary.green,
+                          blue: theme.colorScheme.primary.blue,
+                          alpha: 51, // 0.2 * 255 ≈ 51
+                        ),
                       ),
                     ),
                   ],
                   borderData: FlBorderData(
                     border: Border(
-                      bottom: BorderSide(color: Theme.of(context).colorScheme.inversePrimary),
-                      left: BorderSide(color: Theme.of(context).colorScheme.inversePrimary),
+                      bottom: BorderSide(color: theme.colorScheme.inversePrimary),
+                      left: BorderSide(color: theme.colorScheme.inversePrimary),
                     ),
                   ),
                   gridData: FlGridData(
