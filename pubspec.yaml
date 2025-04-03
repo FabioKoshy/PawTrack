@@ -28,6 +28,13 @@ dependencies:
   latlong2: ^0.9.0
   intl: ^0.19.0
   permission_handler: ^11.3.1
+  flutter_blue_plus: ^1.35.3
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/paw_heart_dark_logo.png"  # Path to the PNG file
 
 dev_dependencies:
   flutter_test:
@@ -37,6 +44,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/paw_heart_dark_logo.svg
-    - assets/images/paw_heart_light_logo.svg
-    - .env
+    - assets/images/paw_heart_light_logo.svg  # Path to the SVG file
+    - assets/images/paw_heart_dark_logo.png
+    - .env  # Other assets if needed
