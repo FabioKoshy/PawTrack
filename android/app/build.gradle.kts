@@ -28,10 +28,19 @@ android {
     }
 
     buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("release") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            // Use this if you're signing the APK
+            // signingConfig = signingConfigs.getByName("release")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
+
+
 }
 
 dependencies {
