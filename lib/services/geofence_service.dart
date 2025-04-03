@@ -4,6 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pawtrack/services/notification_service.dart';
 
 class GeofenceService {
   static final GeofenceService _instance = GeofenceService._internal();
@@ -155,5 +156,12 @@ class GeofenceService {
 
   void stop() {
     _gpsSubscription?.cancel();
+  }
+
+  void onGeofenceBreach() {
+    NotificationService.showNotification(
+      "Geofence Alert",
+      "Your pet has exited the safe zone!",
+    );
   }
 }
