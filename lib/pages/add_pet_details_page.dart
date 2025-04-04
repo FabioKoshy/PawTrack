@@ -20,10 +20,10 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
   final TextEditingController weightController = TextEditingController();
   String? selectedDevice;
   File? _image;
-  final List<String> mockBluetoothDevices = ['Device1', 'Device2', 'Device3'];
+  final List<String> mockBluetoothDevices = ['Device1', 'Device2', 'Device3']; // Mock devices
   final PetService _petService = PetService();
   final ImagePicker _picker = ImagePicker();
-  bool _isLoading = false; // Added loading state
+  bool _isLoading = false;
 
   Future<void> _pickImage() async {
     PermissionStatus status = await Permission.photos.status;
@@ -88,7 +88,7 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
     }
 
     setState(() {
-      _isLoading = true; // Show loading indicator
+      _isLoading = true;
     });
 
     try {
@@ -121,7 +121,7 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
       }
 
       await _petService.addPet(
-        nameController.text,
+        nameController.text.trim(),
         selectedDevice!,
         age: age,
         breed: breedController.text.isNotEmpty ? breedController.text : null,
@@ -129,15 +129,19 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
         image: _image,
       );
 
-      Navigator.pop(context, true);
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to add pet: $e'), backgroundColor: Colors.red),
       );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -154,7 +158,7 @@ class _AddPetDetailsPageState extends State<AddPetDetailsPage> {
                 onTap: _pickImage,
                 child: CircleAvatar(
                   radius: 50,
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   child: _image != null
                       ? ClipOval(
                     child: Image.file(

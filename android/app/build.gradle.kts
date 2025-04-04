@@ -7,7 +7,6 @@ plugins {
 android {
     namespace = "com.example.PawTrack.pawtrack"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -21,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.PawTrack.pawtrack"
-        minSdkVersion(23)
+        minSdkVersion(23)  // Corrected function call for minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

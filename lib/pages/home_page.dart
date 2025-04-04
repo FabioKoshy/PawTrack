@@ -5,7 +5,6 @@ import 'package:pawtrack/components/square_button.dart';
 import 'package:pawtrack/pages/add_pet_page.dart';
 import 'package:pawtrack/pages/heart_rate_page.dart';
 import 'package:pawtrack/pages/location_tracker_page.dart';
-import 'package:pawtrack/pages/activity_tracker_page.dart';
 import 'package:pawtrack/pages/notifications_page.dart';
 import 'package:pawtrack/pages/pet_profile_page.dart';
 import 'package:pawtrack/pages/settings_page.dart';
@@ -62,7 +61,10 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HeartRatePage(petName: pet.name),
+                          builder: (context) => HeartRatePage(
+                            petName: pet.name,
+                            petId: pet.id,
+                          ),
                         ),
                       );
                     } else if (buttonType == "Location") {
@@ -70,13 +72,6 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => LocationTrackerPage(petId: pet.id),
-                        ),
-                      );
-                    } else if (buttonType == "Activity") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ActivityTrackerPage(petId: pet.id),
                         ),
                       );
                     }
@@ -159,10 +154,13 @@ class _HomePageState extends State<HomePage> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 20),
+                  // Center-aligned Heart and Location buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // Use Expanded with flex to make both buttons the same size
                       Expanded(
+                        flex: 1,
                         child: SquareButton(
                           text: "Heart",
                           icon: Icons.favorite,
@@ -172,21 +170,13 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Expanded(
+                        flex: 1,
                         child: SquareButton(
                           text: "Location",
                           icon: Icons.location_on,
                           color: Theme.of(context).colorScheme.secondary,
                           isSelected: selectedButton == "Location",
                           onTap: () => openPetSelection(context, "Location"),
-                        ),
-                      ),
-                      Expanded(
-                        child: SquareButton(
-                          text: "Activity",
-                          icon: Icons.pets,
-                          color: Theme.of(context).colorScheme.primary,
-                          isSelected: selectedButton == "Activity",
-                          onTap: () => openPetSelection(context, "Activity"),
                         ),
                       ),
                     ],
