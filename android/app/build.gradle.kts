@@ -21,7 +21,7 @@ android {
     defaultConfig {
         applicationId = "com.example.PawTrack.pawtrack"
         minSdkVersion(23)  // Corrected function call for minSdkVersion
-        targetSdk = 35
+        targetSdk = 35 //Less than 35 would not work
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
