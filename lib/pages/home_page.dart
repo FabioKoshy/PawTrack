@@ -5,7 +5,6 @@ import 'package:pawtrack/components/square_button.dart';
 import 'package:pawtrack/pages/add_pet_page.dart';
 import 'package:pawtrack/pages/heart_rate_page.dart';
 import 'package:pawtrack/pages/location_tracker_page.dart';
-import 'package:pawtrack/pages/activity_tracker_page.dart';
 import 'package:pawtrack/pages/notifications_page.dart';
 import 'package:pawtrack/pages/pet_profile_page.dart';
 import 'package:pawtrack/pages/settings_page.dart';
@@ -70,13 +69,6 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => LocationTrackerPage(petId: pet.id),
-                        ),
-                      );
-                    } else if (buttonType == "Activity") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ActivityTrackerPage(petId: pet.id),
                         ),
                       );
                     }

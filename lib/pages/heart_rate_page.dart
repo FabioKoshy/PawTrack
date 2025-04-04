@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:pawtrack/pages/HeartRateTrendsPage.dart';
+import 'package:pawtrack/pages/heart_rate_trends_page.dart';
 
 class HeartRatePage extends StatefulWidget {
   final String petName;

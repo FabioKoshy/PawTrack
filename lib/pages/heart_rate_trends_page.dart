@@ -18,12 +18,7 @@ class HeartRateTrendsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("$petName's Heart Rate Trends"),
-        backgroundColor: theme.colorScheme.primary.withValues(
-          red: theme.colorScheme.primary.red,
-          green: theme.colorScheme.primary.green,
-          blue: theme.colorScheme.primary.blue,
-          alpha: 51, // 0.2 * 255 ≈ 51
-        ),
+        backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
       ),
       backgroundColor: theme.colorScheme.surface,
       body: Padding(
@@ -85,12 +80,7 @@ class HeartRateTrendsPage extends StatelessWidget {
                       dotData: const FlDotData(show: true),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: theme.colorScheme.primary.withValues(
-                          red: theme.colorScheme.primary.red,
-                          green: theme.colorScheme.primary.green,
-                          blue: theme.colorScheme.primary.blue,
-                          alpha: 51, // 0.2 * 255 ≈ 51
-                        ),
+                        color: theme.colorScheme.primary.withOpacity(0.2),
                       ),
                     ),
                   ],
