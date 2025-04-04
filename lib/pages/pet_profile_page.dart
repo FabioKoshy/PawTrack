@@ -3,7 +3,6 @@ import 'package:pawtrack/models/pet.dart';
 import 'package:pawtrack/pages/edit_pet_details_page.dart';
 import 'package:pawtrack/pages/recent_locations_page.dart';
 import 'package:pawtrack/pages/heart_rate_page.dart';
-import 'package:pawtrack/pages/activity_tracker_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class PetProfilePage extends StatefulWidget {
@@ -196,19 +195,10 @@ class _PetProfilePageState extends State<PetProfilePage> {
                             () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HeartRatePage(petName: _pet.name),
-                          ),
-                        ),
-                      ),
-                      _buildActionButton(
-                        context,
-                        'Activity',
-                        Icons.pets,
-                        Theme.of(context).colorScheme.primary,
-                            () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ActivityTrackerPage(petId: _pet.id),
+                            builder: (context) => HeartRatePage(
+                              petName: _pet.name,
+                              petId: _pet.id, // Added the petId parameter
+                            ),
                           ),
                         ),
                       ),

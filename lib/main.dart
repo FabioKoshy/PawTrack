@@ -9,9 +9,12 @@ import 'package:pawtrack/theme/theme.dart';
 import 'package:pawtrack/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:firebase_database/firebase_database.dart';
+import 'package:pawtrack/pages/notifications_page.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,16 +22,16 @@ void main() async {
   // Load environment variables
   try {
     await dotenv.load(fileName: ".env");
-    print("Environment variables loaded successfully");
+    debugPrint("Environment variables loaded successfully");
   } catch (e) {
-    print("Error loading environment variables: $e");
+    debugPrint("Error loading environment variables: $e");
   }
 
   // Initialize Firebase with options from .env
   try {
-    print("Initializing Firebase with:");
-    print("API Key: ${dotenv.env['FIREBASE_API_KEY']?.substring(0, 3)}...");
-    print("Project ID: ${dotenv.env['FIREBASE_PROJECT_ID']}");
+    debugPrint("Initializing Firebase with:");
+    debugPrint("API Key: ${dotenv.env['FIREBASE_API_KEY']?.substring(0, 3)}...");
+    debugPrint("Project ID: ${dotenv.env['FIREBASE_PROJECT_ID']}");
 
     await Firebase.initializeApp(
       options: FirebaseOptions(
@@ -39,9 +42,9 @@ void main() async {
         storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? '',
       ),
     );
-    print("Firebase initialized successfully");
+    debugPrint("Firebase initialized successfully");
   } catch (e) {
-    print("Error initializing Firebase: $e");
+    debugPrint("Error initializing Firebase: $e");
   }
 
   // Initialize Supabase
@@ -55,9 +58,9 @@ void main() async {
       url: supabaseUrl,
       anonKey: supabaseAnonKey,
     );
-    print("Supabase initialized successfully");
+    debugPrint("Supabase initialized successfully");
   } catch (e) {
-    print("Error initializing Supabase: $e");
+    debugPrint("Error initializing Supabase: $e");
   }
 
   // Request notification permission for Android 13+
@@ -70,21 +73,24 @@ void main() async {
       child: const MyApp(),
     ),
   );
+
+  // Initialize default tracking status
+  FirebaseDatabase.instance.ref().child("sensor/tracking").set(false);
 }
 
 Future<void> _requestNotificationPermission() async {
   if (await Permission.notification.isDenied) {
     final status = await Permission.notification.request();
     if (status.isDenied) {
-      print("Notification permission denied");
+      debugPrint("Notification permission denied");
     } else if (status.isPermanentlyDenied) {
-      print("Notification permission permanently denied. Please enable it in settings.");
+      debugPrint("Notification permission permanently denied. Please enable it in settings.");
       await openAppSettings();
     } else {
-      print("Notification permission granted");
+      debugPrint("Notification permission granted");
     }
   } else {
-    print("Notification permission already granted");
+    debugPrint("Notification permission already granted");
   }
 }
 
@@ -105,6 +111,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.welcome: (context) => const WelcomePage(),
         AppRoutes.access: (context) => const AccessMode(),
         AppRoutes.home: (context) => const HomePage(),
+        '/notifications': (context) => const NotificationsPage(),
       },
     );
   }
@@ -118,7 +125,7 @@ class AuthWrapper extends StatelessWidget {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getBool('hasSeenWelcome') ?? false;
     } catch (e) {
-      print("Error checking welcome preference: $e");
+      debugPrint("Error checking welcome preference: $e");
       return false;
     }
   }
@@ -128,7 +135,7 @@ class AuthWrapper extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        print("Auth state changed: ${snapshot.connectionState}, hasData: ${snapshot.hasData}, data: ${snapshot.data?.uid}");
+        debugPrint("Auth state changed: ${snapshot.connectionState}, hasData: ${snapshot.hasData}, data: ${snapshot.data?.uid}");
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
