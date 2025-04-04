@@ -140,21 +140,31 @@ class NotificationService {
   }
 }
 
+import 'package:pawtrack/services/notification_service.dart';
+
+import '../services/notification_service.dart';
+
+
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
 
   @override
-  State<NotificationsPage> createState() => _NotificationsPageState();
+  _NotificationsPageState createState() => _NotificationsPageState();
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
+
   final PetService _petService = PetService();
   final List<Map<String, dynamic>> notifications = [];
   bool isLoading = true;
 
+  List<String> notifications = [];
+
+
   @override
   void initState() {
     super.initState();
+
     // Initialize notification service in case it hasn't been done yet
     if (mounted) {
       NotificationService().initialize(context);
@@ -180,6 +190,16 @@ class _NotificationsPageState extends State<NotificationsPage> {
       }
 
       if (mounted) {
+
+    NotificationService.init();
+    _listenToHeartRate();
+  }
+
+  void _listenToHeartRate() {
+    getHeartRateStream().listen((int heartRate) {
+      if (heartRate < 50 || heartRate > 100) {
+        NotificationService.showNotification("Heart Rate Alert", "Heart rate is $heartRate BPM!");
+
         setState(() {
           isLoading = false;
         });
@@ -297,6 +317,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     });
   }
 
+
   String _formatTimestamp(DateTime timestamp) {
     final now = DateTime.now();
     final difference = now.difference(timestamp);
@@ -309,6 +330,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
       return "${difference.inHours}h ago";
     } else {
       return "${difference.inDays}d ago";
+
+  Stream<int> getHeartRateStream() async* {
+    List<int> heartRates = [65, 72, 110, 45, 85, 125, 60]; // Example values
+    for (int rate in heartRates) {
+      yield rate;
+
     }
   }
 
@@ -317,6 +344,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
+
       appBar: AppBar(
         title: const Text("Notifications"),
         backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
@@ -430,6 +458,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 ),
               ),
             ),
+
+      appBar: AppBar(title: const Text("Notifications")),
+      body: notifications.isEmpty
+          ? const Center(child: Text("No notifications yet"))
+          : ListView.builder(
+        itemCount: notifications.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(notifications[index]),
+            leading: const Icon(Icons.warning, color: Colors.red),
+
           );
         },
       ),
