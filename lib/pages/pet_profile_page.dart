@@ -148,12 +148,10 @@ class _PetProfilePageState extends State<PetProfilePage> {
                           const SizedBox(height: 16),
                           _buildDetailRow(context, 'Name', _pet.name),
                           _buildDetailRow(context, 'Bluetooth Device', _pet.bluetoothDeviceId),
-                          if (_pet.age != null)
-                            _buildDetailRow(context, 'Age', '${_pet.age} years'),
-                          if (_pet.breed != null)
-                            _buildDetailRow(context, 'Breed', _pet.breed!),
-                          if (_pet.weight != null)
-                            _buildDetailRow(context, 'Weight', '${_pet.weight} kg'),
+                          _buildDetailRow(context, 'Wi-Fi Network', _pet.wifiNetwork ?? 'Connected'), // Display wifiNetwork
+                          if (_pet.age != null) _buildDetailRow(context, 'Age', '${_pet.age} years'),
+                          if (_pet.breed != null) _buildDetailRow(context, 'Breed', _pet.breed!),
+                          if (_pet.weight != null) _buildDetailRow(context, 'Weight', '${_pet.weight} kg'),
                         ],
                       ),
                     ),
@@ -197,7 +195,7 @@ class _PetProfilePageState extends State<PetProfilePage> {
                           MaterialPageRoute(
                             builder: (context) => HeartRatePage(
                               petName: _pet.name,
-                              petId: _pet.id, // Added the petId parameter
+                              petId: _pet.id,
                             ),
                           ),
                         ),
@@ -230,9 +228,7 @@ class _PetProfilePageState extends State<PetProfilePage> {
             value,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w400,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black87,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
             ),
           ),
         ],

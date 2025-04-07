@@ -8,6 +8,7 @@ class Pet {
   final String? breed;
   final double? weight;
   final String? imageUrl;
+  final String? wifiNetwork; // Field for Wi-Fi network name (SSID)
 
   Pet({
     required this.id,
@@ -17,6 +18,7 @@ class Pet {
     this.breed,
     this.weight,
     this.imageUrl,
+    this.wifiNetwork,
   });
 
   factory Pet.fromFirestore(DocumentSnapshot doc) {
@@ -29,6 +31,7 @@ class Pet {
       breed: data['breed'],
       weight: data['weight']?.toDouble(),
       imageUrl: data['imageUrl'],
+      wifiNetwork: data['wifiNetwork'], // Load from Firestore
     );
   }
 
@@ -40,6 +43,7 @@ class Pet {
       'breed': breed,
       'weight': weight,
       'imageUrl': imageUrl,
+      'wifiNetwork': wifiNetwork, // Save to Firestore
     };
   }
 }

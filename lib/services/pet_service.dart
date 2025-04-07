@@ -63,6 +63,7 @@ class PetService {
         String? breed,
         double? weight,
         File? image,
+        String? wifiNetwork, // Added wifiNetwork parameter
       }) async {
     if (userId == null) throw Exception('User not logged in');
     try {
@@ -75,6 +76,7 @@ class PetService {
         breed: breed,
         weight: weight,
         imageUrl: null,
+        wifiNetwork: wifiNetwork, // Include wifiNetwork
       );
       // Add pet metadata to Firestore
       final docRef = await _firestore
@@ -103,6 +105,7 @@ class PetService {
         String? breed,
         double? weight,
         String? imageUrl,
+        String? wifiNetwork, // Added wifiNetwork parameter
       }) async {
     if (userId == null) throw Exception('User not logged in');
     final petRef =
@@ -114,6 +117,7 @@ class PetService {
     if (breed != null) updates['breed'] = breed;
     if (weight != null) updates['weight'] = weight;
     if (imageUrl != null) updates['imageUrl'] = imageUrl;
+    if (wifiNetwork != null) updates['wifiNetwork'] = wifiNetwork; // Update wifiNetwork
     await petRef.update(updates);
   }
 
