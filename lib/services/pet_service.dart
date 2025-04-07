@@ -56,7 +56,7 @@ class PetService {
   }
 
   /// Adds a new pet to Firestore and uploads the image to Supabase Storage if provided.
-  Future<void> addPet(
+  Future<Pet> addPet(
       String name,
       String bluetoothDeviceId, {
         int? age,
@@ -75,6 +75,7 @@ class PetService {
         breed: breed,
         weight: weight,
         imageUrl: null,
+        isGpsCalibrated: false,
       );
       // Add pet metadata to Firestore
       final docRef = await _firestore
@@ -89,6 +90,18 @@ class PetService {
         imageUrl = await uploadPetImage(image, docRef.id);
         await docRef.update({'imageUrl': imageUrl});
       }
+
+      // Return the created pet with the ID
+      return Pet(
+        id: docRef.id,
+        name: name,
+        bluetoothDeviceId: bluetoothDeviceId,
+        age: age,
+        breed: breed,
+        weight: weight,
+        imageUrl: imageUrl,
+        isGpsCalibrated: false,
+      );
     } catch (e) {
       throw Exception('Failed to add pet: $e');
     }
@@ -103,6 +116,9 @@ class PetService {
         String? breed,
         double? weight,
         String? imageUrl,
+        bool? isGpsCalibrated,
+        DateTime? lastGpsCalibration,
+        String? espDeviceId,
       }) async {
     if (userId == null) throw Exception('User not logged in');
     final petRef =
@@ -114,6 +130,9 @@ class PetService {
     if (breed != null) updates['breed'] = breed;
     if (weight != null) updates['weight'] = weight;
     if (imageUrl != null) updates['imageUrl'] = imageUrl;
+    if (isGpsCalibrated != null) updates['isGpsCalibrated'] = isGpsCalibrated;
+    if (lastGpsCalibration != null) updates['lastGpsCalibration'] = Timestamp.fromDate(lastGpsCalibration);
+    if (espDeviceId != null) updates['espDeviceId'] = espDeviceId;
     await petRef.update(updates);
   }
 
