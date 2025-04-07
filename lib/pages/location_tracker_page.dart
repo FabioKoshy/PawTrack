@@ -8,6 +8,7 @@ import 'package:pawtrack/models/pet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pawtrack/pages/recent_locations_page.dart';
+import 'package:pawtrack/pages/gps_setup_page.dart';
 import 'package:pawtrack/components/custom_button.dart';
 import 'package:pawtrack/services/geofence_service.dart';
 
@@ -40,9 +41,8 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
   void initState() {
     super.initState();
     _geofenceService = GeofenceService();
-    // Fetch data in parallel
+    // Fetch pet data first
     _fetchPetData();
-    _fetchGpsData();
     _getUserLocation();
     _loadGeofenceSettings();
   }
@@ -61,12 +61,23 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
         .collection('pets')
         .doc(widget.petId)
         .get();
+
     if (snapshot.exists) {
       setState(() {
         pet = Pet.fromFirestore(snapshot);
         isLoadingPetData = false;
       });
+
+      // Only fetch GPS data if GPS is calibrated
+      if (pet != null && pet!.isGpsCalibrated) {
+        _fetchGpsData();
+      }
+
       _geofenceService.initialize(widget.petId, pet!.name);
+    } else {
+      setState(() {
+        isLoadingPetData = false;
+      });
     }
   }
 
@@ -91,12 +102,13 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
             await _saveLocationToFirestore(petLat, petLon, timestamp);
             lastTimestamp = timestamp;
             lastLoggedTime = currentTime;
-            print("Location updated with timestamp: $timestamp at $currentTime");
-          } else {
-            print("Less than 5 minutes since last log, skipping save. Last logged: $lastLoggedTime");
           }
         } else {
-          print("Timestamp unchanged or invalid data, skipping save: $timestamp");
+          setState(() {
+            gpsData = newGpsData;
+            isLoadingGpsData = false;
+            _calculateDistance();
+          });
         }
       } else {
         setState(() {
@@ -195,13 +207,11 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
       userPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      print("User Position retrieved: ${userPosition?.latitude}, ${userPosition?.longitude}");
       setState(() {
         isLoadingUserLocation = false;
         _calculateDistance();
       });
     } catch (e) {
-      print("Error getting user location: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error getting user location: $e')),
       );
@@ -214,7 +224,6 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
 
   void _calculateDistance() {
     if (userPosition == null || gpsData == null) {
-      print("Cannot calculate distance: userPosition or gpsData is null");
       distanceToPet = null;
       return;
     }
@@ -223,7 +232,6 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
     final petLon = gpsData!['stats']?['longitude']?.toDouble();
 
     if (petLat == null || petLon == null) {
-      print("Cannot calculate distance: petLat or petLon is null");
       distanceToPet = null;
       return;
     }
@@ -235,11 +243,7 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
         petLat,
         petLon,
       );
-      print("User location: ${userPosition!.latitude}, ${userPosition!.longitude}");
-      print("Pet location: $petLat, $petLon");
-      print("Distance to pet: $distanceToPet meters");
     } catch (e) {
-      print("Error calculating distance: $e");
       distanceToPet = null;
     }
     setState(() {});
@@ -315,7 +319,6 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
         final petLon = gpsData!['stats']?['longitude']?.toDouble();
         if (petLat != null && petLon != null) {
           mapController.move(LatLng(petLat, petLon), 16.0);
-          print("Zoomed to pet's location: $petLat, $petLon at zoom level 16.0");
         }
       }
 
@@ -331,7 +334,6 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
         geofenceCenter = tappedPoint;
         geofenceEnabled = true;
       });
-      print("Geofence center set to: ${tappedPoint.latitude}, ${tappedPoint.longitude}");
       _saveGeofenceSettings();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Geofence set with radius $geofenceRadius meters at ${tappedPoint.latitude}, ${tappedPoint.longitude}")),
@@ -375,6 +377,42 @@ class _LocationTrackerPageState extends State<LocationTrackerPage> {
               ? const Center(child: CircularProgressIndicator(value: null, semanticsLabel: "Loading pet data..."))
               : pet == null
               ? const Center(child: Text("Pet data not found"))
+              : !pet!.isGpsCalibrated
+              ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.gps_off, size: 64, color: Colors.grey),
+                const SizedBox(height: 16),
+                const Text(
+                  "GPS not calibrated",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "The GPS sensor needs to be calibrated before location tracking is available.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 24),
+                CustomButton(
+                  text: "Calibrate GPS",
+                  icon: Icons.settings,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GpsSetupPage(pet: pet!),
+                      ),
+                    ).then((_) {
+                      // Refresh pet data when returning from GPS setup
+                      _fetchPetData();
+                    });
+                  },
+                ),
+              ],
+            ),
+          )
               : isLoadingGpsData
               ? const Center(child: CircularProgressIndicator(value: null, semanticsLabel: "Loading GPS data..."))
               : gpsData == null

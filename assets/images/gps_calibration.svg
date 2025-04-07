@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <!-- Background gradient -->
+    <defs>
+        <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#2979FF" />
+            <stop offset="100%" stop-color="#82B1FF" />
+        </linearGradient>
+        <linearGradient id="glowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFEB3B" stop-opacity="0.7" />
+            <stop offset="100%" stop-color="#FFC107" stop-opacity="0" />
+        </linearGradient>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="10" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </defs>
+
+    <!-- Sky background -->
+    <rect width="512" height="512" fill="url(#skyGradient)" />
+
+    <!-- Satellite orbit lines -->
+    <circle cx="256" cy="256" r="180" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="5,5" />
+    <circle cx="256" cy="256" r="140" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="5,5" />
+    <circle cx="256" cy="256" r="100" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="5,5" />
+
+    <!-- Satellites -->
+    <g>
+        <!-- Satellite 1 -->
+        <circle cx="256" cy="76" r="10" fill="#E0E0E0" />
+        <rect x="246" y="71" width="20" height="10" rx="2" fill="#3F51B5" />
+        <rect x="251" y="66" width="10" height="5" rx="1" fill="#90CAF9" />
+
+        <!-- Satellite 2 -->
+        <circle cx="123" cy="256" r="10" fill="#E0E0E0" />
+        <rect x="113" y="251" width="20" height="10" rx="2" fill="#3F51B5" />
+        <rect x="118" y="246" width="10" height="5" rx="1" fill="#90CAF9" />
+
+        <!-- Satellite 3 -->
+        <circle cx="380" cy="212" r="10" fill="#E0E0E0" />
+        <rect x="370" y="207" width="20" height="10" rx="2" fill="#3F51B5" />
+        <rect x="375" y="202" width="10" height="5" rx="1" fill="#90CAF9" />
+
+        <!-- Satellite 4 -->
+        <circle cx="290" cy="380" r="10" fill="#E0E0E0" />
+        <rect x="280" y="375" width="20" height="10" rx="2" fill="#3F51B5" />
+        <rect x="285" y="370" width="10" height="5" rx="1" fill="#90CAF9" />
+    </g>
+
+    <!-- GPS Device at bottom -->
+    <g transform="translate(256, 450)">
+        <!-- Device -->
+        <rect x="-30" y="-60" width="60" height="90" rx="6" fill="#212121" />
+        <rect x="-25" y="-55" width="50" height="75" rx="3" fill="#424242" />
+        <rect x="-20" y="-50" width="40" height="60" rx="2" fill="#616161" />
+        <circle cx="0" cy="15" r="7" fill="#F44336" />
+
+        <!-- Antenna -->
+        <rect x="-5" y="-65" width="10" height="10" rx="2" fill="#616161" />
+        <rect x="-3" y="-80" width="6" height="15" rx="1" fill="#BDBDBD" />
+        <circle cx="0" cy="-80" r="4" fill="#03A9F4" />
+    </g>
+
+    <!-- Connection lines with pulse animation -->
+    <g>
+        <path d="M256 450 L256 76" stroke="#FFEB3B" stroke-width="2" stroke-dasharray="5,5" opacity="0.7" />
+        <path d="M256 450 L123 256" stroke="#FFEB3B" stroke-width="2" stroke-dasharray="5,5" opacity="0.7" />
+        <path d="M256 450 L380 212" stroke="#FFEB3B" stroke-width="2" stroke-dasharray="5,5" opacity="0.7" />
+        <path d="M256 450 L290 380" stroke="#FFEB3B" stroke-width="2" stroke-dasharray="5,5" opacity="0.7" />
+
+        <!-- Pulse effects -->
+        <circle cx="256" cy="76" r="20" fill="url(#glowGradient)" filter="url(#glow)">
+            <animate attributeName="r" values="15;25;15" dur="3s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.7;0.3;0.7" dur="3s" repeatCount="indefinite" />
+        </circle>
+
+        <circle cx="123" cy="256" r="20" fill="url(#glowGradient)" filter="url(#glow)">
+            <animate attributeName="r" values="15;25;15" dur="3s" repeatCount="indefinite" begin="0.5s" />
+            <animate attributeName="opacity" values="0.7;0.3;0.7" dur="3s" repeatCount="indefinite" begin="0.5s" />
+        </circle>
+
+        <circle cx="380" cy="212" r="20" fill="url(#glowGradient)" filter="url(#glow)">
+            <animate attributeName="r" values="15;25;15" dur="3s" repeatCount="indefinite" begin="1s" />
+            <animate attributeName="opacity" values="0.7;0.3;0.7" dur="3s" repeatCount="indefinite" begin="1s" />
+        </circle>
+
+        <circle cx="290" cy="380" r="20" fill="url(#glowGradient)" filter="url(#glow)">
+            <animate attributeName="r" values="15;25;15" dur="3s" repeatCount="indefinite" begin="1.5s" />
+            <animate attributeName="opacity" values="0.7;0.3;0.7" dur="3s" repeatCount="indefinite" begin="1.5s" />
+        </circle>
+    </g>
+
+    <!-- Directional text -->
+    <g>
+        <text x="256" y="500" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">
+            POINT ANTENNA TOWARD SKY
+        </text>
+    </g>
+</svg>

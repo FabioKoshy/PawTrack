@@ -8,7 +8,9 @@ class Pet {
   final String? breed;
   final double? weight;
   final String? imageUrl;
-  final String? wifiNetwork; // Field for Wi-Fi network name (SSID)
+  final bool isGpsCalibrated;
+  final DateTime? lastGpsCalibration;
+  final String? espDeviceId;
 
   Pet({
     required this.id,
@@ -18,7 +20,9 @@ class Pet {
     this.breed,
     this.weight,
     this.imageUrl,
-    this.wifiNetwork,
+    this.isGpsCalibrated = false,
+    this.lastGpsCalibration,
+    this.espDeviceId,
   });
 
   factory Pet.fromFirestore(DocumentSnapshot doc) {
@@ -31,7 +35,11 @@ class Pet {
       breed: data['breed'],
       weight: data['weight']?.toDouble(),
       imageUrl: data['imageUrl'],
-      wifiNetwork: data['wifiNetwork'], // Load from Firestore
+      isGpsCalibrated: data['isGpsCalibrated'] ?? false,
+      lastGpsCalibration: data['lastGpsCalibration'] != null
+          ? (data['lastGpsCalibration'] as Timestamp).toDate()
+          : null,
+      espDeviceId: data['espDeviceId'],
     );
   }
 
@@ -43,7 +51,35 @@ class Pet {
       'breed': breed,
       'weight': weight,
       'imageUrl': imageUrl,
-      'wifiNetwork': wifiNetwork, // Save to Firestore
+      'isGpsCalibrated': isGpsCalibrated,
+      'lastGpsCalibration': lastGpsCalibration != null ? Timestamp.fromDate(lastGpsCalibration!) : null,
+      'espDeviceId': espDeviceId,
     };
+  }
+
+  // Create a copy with updated fields
+  Pet copyWith({
+    String? name,
+    String? bluetoothDeviceId,
+    int? age,
+    String? breed,
+    double? weight,
+    String? imageUrl,
+    bool? isGpsCalibrated,
+    DateTime? lastGpsCalibration,
+    String? espDeviceId,
+  }) {
+    return Pet(
+      id: this.id,
+      name: name ?? this.name,
+      bluetoothDeviceId: bluetoothDeviceId ?? this.bluetoothDeviceId,
+      age: age ?? this.age,
+      breed: breed ?? this.breed,
+      weight: weight ?? this.weight,
+      imageUrl: imageUrl ?? this.imageUrl,
+      isGpsCalibrated: isGpsCalibrated ?? this.isGpsCalibrated,
+      lastGpsCalibration: lastGpsCalibration ?? this.lastGpsCalibration,
+      espDeviceId: espDeviceId ?? this.espDeviceId,
+    );
   }
 }
