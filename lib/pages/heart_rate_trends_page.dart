@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class HeartRateTrendsPage extends StatelessWidget {
+enum ChartMode { byDay, byWeek }
+
+class HeartRateEntry {
+  final DateTime timestamp;
+  final double bpm;
+
+  HeartRateEntry(this.timestamp, this.bpm);
+}
+
+
+class HeartRateTrendsPage extends StatefulWidget {
   final String petName;
-  final List<double> bpmHistory;
+  final List<HeartRateEntry> bpmHistory;
 
   const HeartRateTrendsPage({
     super.key,
@@ -12,13 +22,49 @@ class HeartRateTrendsPage extends StatelessWidget {
   });
 
   @override
+  State<HeartRateTrendsPage> createState() => _HeartRateTrendsPageState();
+}
+
+class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
+  ChartMode _selectedMode = ChartMode.byDay;
+
+  List<double> _getWeeklyAverages(List<double> data) {
+    final List<double> weekly = [];
+    for (int i = 0; i < data.length; i += 7) {
+      final weekSlice = data.sublist(i, i + 7 > data.length ? data.length : i + 7);
+      final average = weekSlice.reduce((a, b) => a + b) / weekSlice.length;
+      weekly.add(average);
+    }
+    return weekly;
+  }
+
+  List<FlSpot> _generateSpots() {
+    final now = DateTime.now();
+    final todayEntries = widget.bpmHistory
+        .where((entry) =>
+    entry.timestamp.year == now.year &&
+        entry.timestamp.month == now.month &&
+        entry.timestamp.day == now.day)
+        .toList();
+
+    final last20 = todayEntries.length <= 20
+        ? todayEntries
+        : todayEntries.sublist(todayEntries.length - 20);
+
+    return last20.asMap().entries.map(
+          (entry) => FlSpot(entry.key.toDouble(), entry.value.bpm),
+    ).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
+    final spots = _generateSpots();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("$petName's Heart Rate Trends"),
+        title: Text("${widget.petName}'s Heart Rate Trends"),
         backgroundColor: primaryColor.withOpacity(0.2),
       ),
       backgroundColor: theme.colorScheme.surface,
@@ -26,8 +72,31 @@ class HeartRateTrendsPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            ToggleButtons(
+              isSelected: [
+                _selectedMode == ChartMode.byDay,
+                _selectedMode == ChartMode.byWeek,
+              ],
+              onPressed: (index) {
+                setState(() {
+                  _selectedMode = ChartMode.values[index];
+                });
+              },
+              borderRadius: BorderRadius.circular(12),
+              children: const [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text("By Day"),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text("By Week"),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             Text(
-              "Heart Rate Overview",
+              "Heart Rate Overview (${_selectedMode == ChartMode.byDay ? "Daily" : "Weekly"})",
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -60,22 +129,21 @@ class HeartRateTrendsPage extends StatelessWidget {
                     ),
                     bottomTitles: AxisTitles(
                       axisNameWidget: Text(
-                        "Time",
+                        _selectedMode == ChartMode.byDay ? "Time of the day" : "Weeks",
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
                       ),
-                      sideTitles: const SideTitles(showTitles: true),
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, _) => Text(value.toInt().toString()),
+                      ),
                     ),
                   ),
                   lineBarsData: [
                     LineChartBarData(
-                      spots: bpmHistory
-                          .asMap()
-                          .entries
-                          .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
-                          .toList(),
+                      spots: spots,
                       isCurved: true,
                       color: primaryColor,
                       dotData: const FlDotData(show: true),
@@ -91,13 +159,9 @@ class HeartRateTrendsPage extends StatelessWidget {
                       left: BorderSide(color: theme.colorScheme.inversePrimary),
                     ),
                   ),
-                  gridData: FlGridData(
-                    show: true,
-                    drawHorizontalLine: true,
-                    drawVerticalLine: true,
-                  ),
-                  minY: bpmHistory.isNotEmpty ? bpmHistory.reduce((a, b) => a < b ? a : b) - 10 : 0,
-                  maxY: bpmHistory.isNotEmpty ? bpmHistory.reduce((a, b) => a > b ? a : b) + 10 : 100,
+                  gridData: FlGridData(show: true),
+                  minY: spots.isNotEmpty ? spots.map((s) => s.y).reduce((a, b) => a < b ? a : b) - 10 : 0,
+                  maxY: spots.isNotEmpty ? spots.map((s) => s.y).reduce((a, b) => a > b ? a : b) + 10 : 100,
                 ),
               ),
             ),

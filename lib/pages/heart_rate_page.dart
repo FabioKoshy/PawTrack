@@ -24,7 +24,7 @@ class _HeartRatePageState extends State<HeartRatePage> {
   bool trackingEnabled = false;
   bool isLoading = true;
   bool isSnackBarVisible = false;
-  List<double> bpmHistory = [];
+  List<HeartRateEntry> bpmHistory = [];
 
   // Threshold values with defaults
   int minThreshold = 60;
@@ -119,7 +119,7 @@ class _HeartRatePageState extends State<HeartRatePage> {
           highBPM = (data['stats']?['high_bpm'] ?? 0).toDouble();
 
           if (trackingEnabled && currentBPM > 0) {
-            bpmHistory.add(currentBPM);
+            bpmHistory.add(HeartRateEntry(DateTime.now(), currentBPM));
             debugPrint("Added to bpmHistory: $currentBPM, size: ${bpmHistory.length}");
             if (bpmHistory.length > 50) bpmHistory.removeAt(0);
 
@@ -546,10 +546,10 @@ class _HeartRatePageState extends State<HeartRatePage> {
                 debugPrint("Navigating to HeartRateTrendsPage with ${bpmHistory.length} data points");
 
                 // If no data, provide sample data
-                List<double> dataToUse = bpmHistory;
+                List<HeartRateEntry> dataToUse = bpmHistory;
                 if (dataToUse.isEmpty) {
                   debugPrint("BPM history is empty, using sample data");
-                  dataToUse = [75.0, 78.0, 80.0, 82.0, 79.0, 77.0];
+                  dataToUse = [];
                 }
 
                 Navigator.push(
