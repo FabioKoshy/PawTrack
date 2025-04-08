@@ -101,25 +101,21 @@ class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
   }
 
   List<FlSpot> _generateSpots() {
-    if (_selectedMode == ChartMode.byDay) {
-      final now = DateTime.now();
-      final todayEntries = widget.bpmHistory
-          .where((entry) =>
-      entry.timestamp.year == now.year &&
-          entry.timestamp.month == now.month &&
-          entry.timestamp.day == now.day)
-          .toList();
+    final now = DateTime.now();
+    final todayEntries = widget.bpmHistory
+        .where((entry) =>
+    entry.timestamp.year == now.year &&
+        entry.timestamp.month == now.month &&
+        entry.timestamp.day == now.day)
+        .toList();
 
-      final last20 = todayEntries.length <= 20
-          ? todayEntries
-          : todayEntries.sublist(todayEntries.length - 20);
+    final last20 = todayEntries.length <= 20
+        ? todayEntries
+        : todayEntries.sublist(todayEntries.length - 20);
 
-      return last20.asMap().entries.map(
-            (entry) => FlSpot(entry.key.toDouble(), entry.value.bpm),
-      ).toList();
-    } else {
-      return _generateWeeklySpots();
-    }
+    return last20.map(
+          (entry) => FlSpot(entry.timestamp.hour + entry.timestamp.minute / 60.0, entry.bpm),
+    ).toList();
   }
 
   @override
@@ -184,11 +180,14 @@ class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
                       ),
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 40,
+                        reservedSize: 25, // You can even reduce this to 32 if needed
                         getTitlesWidget: (value, meta) {
-                          return Text(
-                            value.toInt().toString(),
-                            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 4.0), // 👈 Reduce this or set to 0
+                            child: Text(
+                              value.toInt().toString(),
+                              style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
+                            ),
                           );
                         },
                       ),
@@ -203,13 +202,18 @@ class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
                       ),
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, _) => Text(
-                          _selectedMode == ChartMode.byWeek && value % 1 == 0
-                              ? value.toInt().toString()
-                              : value.toInt().toString(),
-                        ),
+                        interval: _selectedMode == ChartMode.byDay ? 3 : null,
+                        getTitlesWidget: (value, _) {
+                          if (_selectedMode == ChartMode.byDay) {
+                            return Text("${value.toInt()}");
+                          } else {
+                            return Text("W${value.toInt()}");
+                          }
+                        },
                       ),
                     ),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
                   lineBarsData: [
                     LineChartBarData(
@@ -229,9 +233,35 @@ class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
                       left: BorderSide(color: theme.colorScheme.inversePrimary),
                     ),
                   ),
-                  gridData: FlGridData(show: true),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: true,
+                    drawHorizontalLine: true,
+                    getDrawingVerticalLine: (value) {
+                      if (value % 3 == 0) {
+                        return FlLine(
+                          color: Colors.blueGrey.withOpacity(0.3),
+                          strokeWidth: 1,
+                          dashArray: [4, 4],
+                        );
+                      }
+                      // Skip other lines
+                      return FlLine(
+                        color: Colors.transparent,
+                        strokeWidth: 0,
+                      );
+                    },
+                    getDrawingHorizontalLine: (value) {
+                      return FlLine(
+                        color: Colors.blueGrey.withOpacity(0.3),
+                        strokeWidth: 1,
+                        dashArray: [4, 4], // 👈 same for horizontal
+                      );
+                    },),
                   minY: spots.isNotEmpty ? spots.map((s) => s.y).reduce((a, b) => a < b ? a : b) - 10 : 0,
                   maxY: spots.isNotEmpty ? spots.map((s) => s.y).reduce((a, b) => a > b ? a : b) + 10 : 100,
+                  minX: _selectedMode == ChartMode.byDay ? 0 : null,
+                  maxX: _selectedMode == ChartMode.byDay ? 24 : null,
                 ),
               ),
             ),
@@ -241,4 +271,3 @@ class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
     );
   }
 }
-
