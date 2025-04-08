@@ -38,22 +38,88 @@ class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
     return weekly;
   }
 
-  List<FlSpot> _generateSpots() {
+  List<FlSpot> _generateWeeklySpots() {
     final now = DateTime.now();
-    final todayEntries = widget.bpmHistory
-        .where((entry) =>
-    entry.timestamp.year == now.year &&
-        entry.timestamp.month == now.month &&
-        entry.timestamp.day == now.day)
-        .toList();
+    final sevenDaysAgo = now.subtract(const Duration(days: 7));
 
-    final last20 = todayEntries.length <= 20
-        ? todayEntries
-        : todayEntries.sublist(todayEntries.length - 20);
+    final Map<int, List<HeartRateEntry>> dailyEntries = {};
 
-    return last20.asMap().entries.map(
-          (entry) => FlSpot(entry.key.toDouble(), entry.value.bpm),
-    ).toList();
+    for (var entry in widget.bpmHistory) {
+      if (entry.timestamp.isAfter(sevenDaysAgo)) {
+        final daysFromStart = entry.timestamp.difference(sevenDaysAgo).inDays;
+        if (daysFromStart >= 0 && daysFromStart < 7) {
+          dailyEntries.putIfAbsent(daysFromStart, () => []).add(entry);
+        }
+      }
+    }
+
+
+    final uniqueDays = dailyEntries.keys.length;
+    if (uniqueDays < 7) {
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please wait until you have 7 days of data to view weekly trends.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      });
+      return [];
+    }
+
+
+    final List<FlSpot> spots = [];
+
+    dailyEntries.forEach((day, entries) {
+
+      entries.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+      if (entries.isEmpty) return;
+
+
+      final int entriesPerSegment = (entries.length / 3).ceil();
+
+      for (int segment = 0; segment < 3; segment++) {
+        final startIdx = segment * entriesPerSegment;
+        final endIdx = (startIdx + entriesPerSegment) > entries.length
+            ? entries.length
+            : startIdx + entriesPerSegment;
+
+        if (startIdx >= entries.length) continue;
+
+        final segmentEntries = entries.sublist(startIdx, endIdx);
+        final avgBpm = segmentEntries.fold(0.0, (sum, entry) => sum + entry.bpm) / segmentEntries.length;
+
+
+        final xPos = day.toDouble() + (segment / 3);
+        spots.add(FlSpot(xPos, avgBpm));
+      }
+    });
+
+    return spots;
+  }
+
+  List<FlSpot> _generateSpots() {
+    if (_selectedMode == ChartMode.byDay) {
+      final now = DateTime.now();
+      final todayEntries = widget.bpmHistory
+          .where((entry) =>
+      entry.timestamp.year == now.year &&
+          entry.timestamp.month == now.month &&
+          entry.timestamp.day == now.day)
+          .toList();
+
+      final last20 = todayEntries.length <= 20
+          ? todayEntries
+          : todayEntries.sublist(todayEntries.length - 20);
+
+      return last20.asMap().entries.map(
+            (entry) => FlSpot(entry.key.toDouble(), entry.value.bpm),
+      ).toList();
+    } else {
+      return _generateWeeklySpots();
+    }
   }
 
   @override
@@ -129,7 +195,7 @@ class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
                     ),
                     bottomTitles: AxisTitles(
                       axisNameWidget: Text(
-                        _selectedMode == ChartMode.byDay ? "Time of the day" : "Weeks",
+                        _selectedMode == ChartMode.byDay ? "Time of the day" : "Days",
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -137,7 +203,11 @@ class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
                       ),
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, _) => Text(value.toInt().toString()),
+                        getTitlesWidget: (value, _) => Text(
+                          _selectedMode == ChartMode.byWeek && value % 1 == 0
+                              ? value.toInt().toString()
+                              : value.toInt().toString(),
+                        ),
                       ),
                     ),
                   ),
@@ -171,3 +241,4 @@ class _HeartRateTrendsPageState extends State<HeartRateTrendsPage> {
     );
   }
 }
+
