@@ -1,13 +1,14 @@
 # PawTrack 🐾
 
-PawTrack is a Flutter-based mobile application designed to help pet owners track their pets' health and location. With PawTrack, you can monitor your pet's adventures, manage their well-being, and stay connected with them wherever they go. The app features user authentication, customizable themes, and a user-friendly interface to ensure a seamless experience for pet owners.
+PawTrack is a Flutter-based mobile application designed to help pet owners track their pets' health and location. With PawTrack, you can monitor your pet's well-being, and stay connected with them wherever they go. The app features user authentication, customizable themes, and a user-friendly interface to ensure a seamless experience for pet owners.
 
 ## Features
 
-- **Pet Health Tracking**: Monitor your pet's health metrics (coming soon)
-- **Location Tracking**: Track your pet's location in real-time (coming soon)
+- **Pet Health Tracking**: Monitor your pet's health metrics 
+- **Location Tracking**: Track your pet's location in real-time 
 - **User Authentication**: Secure login and registration using Firebase Authentication
 - **Customizable Themes**: Switch between dark and light themes for a personalized experience
+- **Create multiple Pet Profiles**: User can create multiple pet profiles with the same account   
 
 ## Tech Stack
 
