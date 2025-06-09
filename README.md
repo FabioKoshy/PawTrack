@@ -1,162 +1,174 @@
-# PawTrack 🐾
 
-PawTrack is a Flutter-based mobile application designed to help pet owners track their pets' health and location. With PawTrack, you can monitor your pet's well-being, and stay connected with them wherever they go. The app features user authentication, customizable themes, and a user-friendly interface to ensure a seamless experience for pet owners.
+# 🐾 PawTrack
 
-## Features
+## 📌 About the App
+**PawTrack** is a smart and intuitive Flutter-based mobile application that helps pet owners monitor their pets’ **health** and **location** in real time. Designed with convenience in mind, PawTrack offers **user authentication**, **multiple pet profiles**, and **customizable themes** to make tracking your furry friend's well-being simple and effective.
 
-- **Pet Health Tracking**: Monitor your pet's health metrics 
-- **Location Tracking**: Track your pet's location in real-time 
-- **User Authentication**: Secure login and registration using Firebase Authentication
-- **Customizable Themes**: Switch between dark and light themes for a personalized experience
-- **Create multiple Pet Profiles**: User can create multiple pet profiles with the same account   
+Stay connected with your pet — wherever they go. 🐶🐱
 
-## Tech Stack
+---
 
-- **Flutter**: Frontend framework for building cross-platform mobile apps
-- **Dart**: Programming language used with Flutter
-- **Firebase**: Backend services for authentication and (future) data storage
-- **Provider**: State management for theme toggling and app state
-- **flutter_dotenv**: Secure management of sensitive configuration data
-- **Shared Preferences**: Persistent storage for user settings (e.g., welcome page status, login credentials)
+## ✨ Features
 
-## Prerequisites
+✅ **Pet Health Tracking** – Monitor key health metrics for each pet.  
+✅ **Real-Time Location Tracking** – Live GPS tracking powered by Firebase.  
+✅ **User Authentication** – Secure login and sign-up using Firebase Authentication.  
+✅ **Multiple Pet Profiles** – Manage and track multiple pets from a single account.  
+✅ **Customizable Themes** – Switch between dark and light themes for a personalized look.  
+✅ **Onboarding Experience** – A Welcome page on first launch with theme selection and guidance.
 
-Before setting up the project, ensure you have the following installed:
+---
 
-- Flutter SDK (version >= 3.27.0, Dart >= 3.0.0 < 4.0.0)
-- Android Studio or Visual Studio Code with Flutter and Dart plugins
-- A Firebase project 
+## 🛠 Installation & Setup
 
+### 🚀 Try It in the Browser!
+No need to install anything! You can preview PawTrack instantly in your browser:
 
-## Setup Instructions
+👉 **[Click here to run the app](https://appetize.io/app/android/com.example.PawTrack.pawtrack?device=pixel7&osVersion=13.0&toolbar=true)**  
+*The app will open in an emulator. Use the on-screen buttons to navigate through the Welcome and Login screens.*
 
-### 1. Clone the Repository
+---
 
-Clone the PawTrack repository to your local machine:
+### 🔧 Prerequisites
+Make sure you have the following installed:
 
+- ✅ Flutter SDK (`>=3.27.0`)
+- ✅ Dart SDK (`>=3.0.0 <4.0.0`)
+- ✅ Android Studio or VS Code (with Flutter & Dart plugins)
+- ✅ A configured Firebase project
+
+---
+
+### ⚙️ Setup Steps
+
+#### 1️⃣ Clone the Repository
 ```bash
 git clone <repository-url>
 cd pawtrack
 ```
 
-### 2. Install Dependencies
-
-Install the required Flutter dependencies:
-
+#### 2️⃣ Install Dependencies
 ```bash
 flutter pub get
 ```
 
-### 3. Set Up Environment Variables
+#### 3️⃣ Set Up Environment Variables
 
-PawTrack uses environment variables to manage sensitive Firebase configuration data. You'll need a `.env` file with the necessary Firebase credentials.
+PawTrack uses a `.env` file to securely load Firebase configuration data.
 
-1. **Obtain the `.env` File**: Contact a team member or project admin to get the `.env` file securely (via an encrypted channel, e.g., email, secure file-sharing service, or secret management tool).
-
-2. **Place the `.env` File**: Copy the `.env` file to the root of the project directory.
-
-3. **Example `.env` File**: The `.env` file should contain the following Firebase configuration variables (values below are examples; replace them with the actual values provided by your team):
+- **Request the `.env` file** from a team member (via secure means like email or encrypted storage).
+- Place it in the root of the project directory.
+- Example structure:
 
 ```
-FIREBASE_PROJECT_ID=<FIREBASE_PROJECT_ID goes here>
-FIREBASE_APP_ID=1:<FIREBASE_APP_ID=1 goes here>
-FIREBASE_API_KEY=<FIREBASE_API_KEY goes here>
-FIREBASE_MESSAGING_SENDER_ID=<FIREBASE_MESSAGING_SENDER_ID goes here>
-FIREBASE_STORAGE_BUCKET=<FIREBASE_STORAGE_BUCKET goes here>
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_APP_ID=your_app_id
+FIREBASE_API_KEY=your_api_key
+FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+FIREBASE_STORAGE_BUCKET=your_bucket_url
 ```
 
-**Important**: Do not commit the `.env` file to the repository. It's already ignored in `.gitignore`.
+⚠️ *Do NOT commit `.env` to GitHub. It's already listed in `.gitignore`.*
 
-### 4. Run the App
-
-Launch the app on an emulator or physical device:
-
+#### 4️⃣ Run the App
 ```bash
 flutter run
 ```
 
-- **First Launch**: You'll see the WelcomePage, where you can toggle between dark and light themes.
-- **Subsequent Launches**: After logging in or registering, you'll be directed to the HomePage, where pet tracking features will be available (in development).
+- On first launch, you'll be greeted with the **Welcome Page**.
+- After login or sign-up, the **Home Page** will guide you through pet management.
 
-## Project Structure
+---
 
-Here's an overview of the project's directory structure:
+## 📁 Project Structure
 
 ```
 pawtrack/
 │
-├── android/               # Android-specific configuration
-├── ios/                   
-├── lib/                   # Main application code
-│   ├── auth/              # Authentication-related logic
-│   ├── components/        # Reusable UI components 
-│   ├── pages/             # Main app screens
-│   ├── services/          # Backend services 
-│   ├── theme/             # Theme definitions 
-│   ├── utils/             # Utility functions and constants
-│   └── main.dart          # App entry point
-├── assets/                # Static assets 
-│   ├── images/            # App logos 
-│   └── .env               # Environment variables 
-├── pubspec.yaml           # Project dependencies and metadata
-└── README.md              # Project documentation 
+├── android/               # Android-specific files
+├── ios/                   # iOS-specific files
+├── lib/                   
+│   ├── auth/              # Firebase auth logic
+│   ├── components/        # Reusable UI widgets
+│   ├── pages/             # Screens (Home, Welcome, Profile, etc.)
+│   ├── services/          # Firebase and app logic
+│   ├── theme/             # Light/Dark mode settings
+│   ├── utils/             # Helpers and constants
+│   └── main.dart          # Entry point
+├── assets/                
+│   ├── images/            # App icons and logos
+│   └── .env               # Environment variables (ignored by Git)
+├── pubspec.yaml           # Dependencies
+└── README.md              # Project documentation
 ```
 
-## Firebase Configuration
+---
 
-PawTrack uses Firebase for authentication and backend services. Firebase is initialized manually using environment variables to ensure sensitive data is not hardcoded in the codebase.
+## 🔐 Firebase Configuration
 
-- **Sensitive Files Removed**: The following files are not used in the repository and should not be present:
-    - `android/app/google-services.json` 
-    - `ios/Runner/GoogleService-Info.plist` 
-    - `lib/firebase_options.dart` 
-    - `firebase.json` 
+- Firebase integration is **manually handled** via environment variables.
+- **Do not include** the following sensitive files:
+  - `google-services.json`
+  - `GoogleService-Info.plist`
+  - `firebase_options.dart`
+  - `firebase.json`
 
-- **Updating Firebase Config**: If you need to update Firebase configuration (e.g., add a new app, change API keys), contact the project admin to get an updated `.env` file.
+🛠 For Firebase changes, contact the project admin for an updated `.env` file.
 
-## Contributing
+---
 
-1. Fork the repository and create a new branch for your feature or bug fix:
+## 🧪 Troubleshooting
 
+💥 **Build Fails?**  
+- Make sure `.env` exists and is correctly populated.
+
+🔐 **Authentication Not Working?**  
+- Double-check Firebase setup and that the `firebase_auth` version is compatible.
+
+🎨 **Theme Not Switching?**  
+- Ensure `ThemeProvider` is implemented and wired correctly with `Provider`.
+
+---
+
+## 🌱 Future Enhancements
+
+🚧 The following features are planned for future development:
+
+- 📍 **Live GPS Mapping**
+- 🩺 **Pet Health Logbook** (vet visits, vaccinations)
+- 🔔 **Push Notifications** for alerts (e.g., escaped pet, health warning)
+- 🧠 **Behavior Analytics**
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! To get started:
+
+1. **Fork** the repository  
+2. **Create a branch**:
 ```bash
-git checkout -b feature/your-feature-name
+git checkout -b feature/my-feature
 ```
-
-2. Make your changes and test them thoroughly.
-
-3. Commit your changes with a descriptive commit message:
-
+3. **Commit** your changes:
 ```bash
-git commit -m "Add your commit message here"
+git commit -m "Describe the feature"
 ```
-
-4. Push your branch to the repository:
-
+4. **Push** and open a Pull Request:
 ```bash
-git push origin feature/your-feature-name
+git push origin feature/my-feature
 ```
 
-5. Create a pull request and describe your changes in detail.
+✅ Please describe your changes clearly in the PR!
 
-## Troubleshooting
+---
 
-- **Build Fails Due to Missing `.env` File**:
-    - Ensure the `.env` file is in the project root and contains the correct Firebase configuration.
+## 📝 License
+This project is licensed under the **MIT License**. See the `LICENSE` file for details.
 
-- **Firebase Authentication Not Working**:
-    - Verify that the Firebase project (pawtrack-1) is correctly set up in the Firebase console and that Authentication is enabled.
-    - Check that the `.env` file values match your Firebase project settings.
-    - Ensure `firebase_auth` version (4.17.0) is compatible with your Flutter version.
+---
 
-- **Theme Not Switching**:
-    - Ensure the `provider` package is correctly set up and that `ThemeProvider` is being used in `main.dart`.
+## 📬 Contact
+Have questions or suggestions? Reach out via **GitHub Issues**, or email the project maintainer.
 
-## Future Enhancements
-
-- **Real-Time Location Tracking**: Integrate GPS and mapping services to track pets in real-time.
-- **Health Metrics**: Add features to log and monitor pet health data (e.g., vaccinations, vet visits).
-- **Push Notifications**: Implement Firebase Cloud Messaging for alerts and reminders.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+🚀 **Track smarter. Care better. With PawTrack.** 🐾
