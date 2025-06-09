@@ -21,7 +21,7 @@ Stay connected with your pet — wherever they go. 🐶🐱
 ## 🛠 Installation & Setup
 
 ### 🚀 Try It in the Browser!
-No need to install anything! You can preview PawTrack instantly in your browser: **[Click here to run the app](https://appetize.io/app/android/com.example.PawTrack.pawtrack?device=pixel7&osVersion=13.0&toolbar=true)**   
+No need to install anything! You can preview PawTrack instantly in your browser: **[Click here to run the app](https://appetize.io/app/b_ymuv4olqbpmqmgeu4qiooz2dn4)**   
 
 The app will open in an emulator. Use the on-screen buttons to navigate through the Welcome and Login Screens.
 
