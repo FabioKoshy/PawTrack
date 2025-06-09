@@ -25,6 +25,9 @@ No need to install anything! You can preview PawTrack instantly in your browser:
 
 👉 **[Click here to run the app](https://appetize.io/app/android/com.example.PawTrack.pawtrack?device=pixel7&osVersion=13.0&toolbar=true)**  
 *The app will open in an emulator. Use the on-screen buttons to navigate through the Welcome and Login screens.*
+---
+
+## 🎬 **[Click here to watch our official video](https://youtu.be/sShe-rrTRvE?si=3ha1o87FQK80g3EU)**
 
 ---
 
