@@ -47,6 +47,10 @@ The app will open in an emulator. Use the on-screen buttons to navigate through 
 |---------------------|----------|----------------|
 | ![Location](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/location%20tracking%20and%20geofence.png) | ![Hardware](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Hardware%20Components.png) | ![Harness attached to pet](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Harness%20with%20device%20attached.png) |
 
+| Heart Rate Threshold |
+|----------------------|
+| ![Threshold](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Heart%20rate%20Threshold.png)| 
+
 ---
 
 ### 🔧 Prerequisites
