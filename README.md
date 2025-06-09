@@ -29,6 +29,23 @@ The app will open in an emulator. Use the on-screen buttons to navigate through 
 
 ## 🎬 **[Click here to watch our official video](https://youtu.be/sShe-rrTRvE?si=3ha1o87FQK80g3EU)**
 
+---
+
+---
+
+## 🖼 UI Screenshots
+
+| Home Page | Add Pet | Profile Page |
+|-----------|---------|---------------|
+| ![Home](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Home%20Page.png) | ![Add Pet](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Add%20Pet%20Details%20page.png) | ![Profile](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Manage%20Pet%20Profile.png) |
+
+| Heart Rate  | Battery Settings | Theme Toggle |
+|-------------------|------------------|--------------|
+| ![Heart Rate](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Heart%20rate.png) | ![Battery](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Battery%20Settings.png) | ![Theme](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Settings%20page%20for%20themes.png) |
+
+| Location & Geofence | Hardware | Pet Wearing It |
+|---------------------|----------|----------------|
+| ![Location](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/location%20tracking%20and%20geofence.png) | ![Hardware](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Hardware%20Components.png) | ![Harness attached to pet](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Harness%20with%20device%20attached.png) |
 
 ---
 
