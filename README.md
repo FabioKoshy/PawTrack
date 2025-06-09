@@ -31,8 +31,6 @@ The app will open in an emulator. Use the on-screen buttons to navigate through 
 
 ---
 
----
-
 ## 🖼 UI Screenshots
 
 | Home Page | Add Pet | Profile Page |
@@ -43,13 +41,13 @@ The app will open in an emulator. Use the on-screen buttons to navigate through 
 |-------------------|------------------|--------------|
 | ![Heart Rate](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Heart%20rate.png) | ![Battery](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Battery%20Settings.png) | ![Theme](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Settings%20page%20for%20themes.png) |
 
-| Location & Geofence | Hardware | Pet Wearing It |
-|---------------------|----------|----------------|
-| ![Location](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/location%20tracking%20and%20geofence.png) | ![Hardware](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Hardware%20Components.png) | ![Harness attached to pet](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Harness%20with%20device%20attached.png) |
+| Heart Rate Threshold | Location & Geofence |
+|----------------------|---------------------|
+| ![Threshold](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Heart%20rate%20Threshold.png) | ![Location](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/location%20tracking%20and%20geofence.png) | 
 
-| Heart Rate Threshold |
-|----------------------|
-| ![Threshold](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Heart%20rate%20Threshold.png)| 
+| Hardware | Pet Wearing it |
+|----------|----------------|
+| ![Hardware](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Hardware%20Components.png) | ![Harness attached to pet](https://github.com/FabioKoshy/PawTrack/blob/stabledemo/screenshots/Harness%20with%20device%20attached.png) |
 
 ---
 
