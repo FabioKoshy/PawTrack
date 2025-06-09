@@ -15,7 +15,6 @@ Stay connected with your pet — wherever they go. 🐶🐱
 ✅ **User Authentication** – Secure login and sign-up using Firebase Authentication.  
 ✅ **Multiple Pet Profiles** – Manage and track multiple pets from a single account.  
 ✅ **Customizable Themes** – Switch between dark and light themes for a personalized look.  
-✅ **Onboarding Experience** – A Welcome page on first launch with theme selection and guidance.
 
 ---
 
